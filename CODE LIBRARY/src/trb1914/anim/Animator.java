@@ -21,7 +21,6 @@ public abstract class Animator {
 	private static Timer animTimer = new Timer(40, new ActionListener(){
 		public void actionPerformed(ActionEvent e){
 			animateAll();
-			//a test comment
 		}
 	});
 
