@@ -1,0 +1,68 @@
+package trb1914.greekType;
+
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
+/**
+ * Based on the java.awt.Robot class, this class provides
+ * easier "typing" by setting text to clipboard and pasting 
+ * it.
+ * @author Mees Gelein
+ */
+public class TypeRobot extends Robot {
+
+	/**The system clipboard ready for usage by the TypeRobot.*/
+	private Clipboard clipboard;
+	
+	/**
+	 * Tries to construct a new typeRobot. This might throw a AWTException
+	 * @throws AWTException
+	 */
+	public TypeRobot() throws AWTException
+	{
+		clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+	}
+	
+	/**
+	 * Pastes the provided text into the currently focused window
+	 * @param text		the text to "type"
+	 */
+	public void typeText(KeyPress keyPress){
+		setClipboardContent(keyPress.text);
+		if(keyPress.shiftPressed) keyRelease(KeyEvent.VK_SHIFT);
+		pasteClipboard();
+		if(keyPress.shiftPressed) keyPress(KeyEvent.VK_SHIFT);
+	}
+	
+	/**
+	 * This function provides a shorthand method for 
+	 * simulating the CTRL+V keycombo
+	 */
+	public void pasteClipboard(){
+		keyPress(KeyEvent.VK_CONTROL);
+		keyPressRelease(KeyEvent.VK_V);
+		keyRelease(KeyEvent.VK_CONTROL);
+	}
+	
+	/**
+	 * Presses and immediately releases the key that is
+	 * provided
+	 * @param keyCode
+	 */
+	public void keyPressRelease(int keyCode){
+		keyPress(keyCode);
+		keyRelease(keyCode);
+	}
+	
+	/**
+	 * Sets the provided String as content on the system clipboard.
+	 * @param text		the String to set as clipboard content
+	 */
+	public void setClipboardContent(String text){
+		StringSelection s = new StringSelection(text);
+		clipboard.setContents(s, s);
+	}
+}

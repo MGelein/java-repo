@@ -1,0 +1,210 @@
+package trb1914.lan;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Vector;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+
+/**
+ * Simple Swing Chat app
+ * @author Mees Gelein
+ */
+public class ChatApp extends JFrame{
+
+	public static final int detectPort = 8888;
+	public static final int port = 4444;
+	public static Image APP_ICON;
+	
+	private Vector<String> addresses = new Vector<String>();
+	
+	private JTextArea inputArea = new JTextArea();
+	private JLabel messageLabel = new JLabel("Welcome to the Chat Application");
+	
+	/**
+	 * Entry point
+	 * @param args
+	 */
+	public static void main(String[] args){
+		try{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run(){
+				ChatApp app = new ChatApp();
+				app.setTitle("Chat Application");
+				app.pack();
+				app.setLocationRelativeTo(null);
+				app.setVisible(true);
+			}
+		});
+	}
+	
+	/**
+	 * Starts the application
+	 */
+	public ChatApp(){
+		makeGUI();
+		new Thread(new Runnable(){
+			public void run(){
+				checkOpenSockets();
+				openDetectSocket();
+				sendMessageToAll("Hello");
+			}
+		}).start();
+	}
+	
+	/**
+	 * Builds the user interface
+	 */
+	private void makeGUI(){
+		addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){
+				try{
+					Thread.sleep(1000);
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+				System.exit(0);
+			}
+		});
+		getImages();
+		setIconImage(APP_ICON);
+		setLayout(new BorderLayout());
+		JPanel contentPanel = new JPanel(new BorderLayout());
+		contentPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		setPreferredSize(new Dimension(480, 360));
+		add(contentPanel);
+		
+		JPanel textPanel = new JPanel(new BorderLayout());
+		textPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
+		JTextArea textArea = new JTextArea();
+		textPanel.add(textArea);
+		contentPanel.add(textPanel);
+		
+		JPanel inputPanel = new JPanel(new BorderLayout());
+		inputPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
+		JButton sendButton = new JButton("Send");
+		inputPanel.add(sendButton, BorderLayout.EAST);
+		inputPanel.add(inputArea);
+		contentPanel.add(inputPanel, BorderLayout.NORTH);
+		
+		JPanel messagePanel = new JPanel(new BorderLayout());
+		Border bA = BorderFactory.createLineBorder(Color.gray);
+		Border bB = BorderFactory.createEmptyBorder(4, 4, 4, 4);
+		messagePanel.setBorder(new CompoundBorder(bA, bB));
+		messagePanel.add(messageLabel);
+		contentPanel.add(messagePanel, BorderLayout.SOUTH);
+	}
+	
+	/**
+	 * Opens a socket that waits for someone to connect. Done on
+	 * a separate thread
+	 */
+	private void openDetectSocket(){
+		new Thread(new Runnable(){
+			public void run(){
+				try{
+					ServerSocket detectSocket = new ServerSocket(detectPort);
+					Socket s = detectSocket.accept();
+					System.out.println("Got connection from: " + s.getInetAddress().getHostAddress());
+					addresses.add(s.getInetAddress().getHostAddress());
+					s.close();
+					detectSocket.close();	
+					run();
+				}catch(Exception e){
+					System.out.println("Couldn't start detecting");
+				}
+				
+			}
+		}).start();		
+	}
+	
+	/**
+	 * Sends the specified message to all registered addresses
+	 * @param msg
+	 */
+	private void sendMessageToAll(String msg){
+		for(String address : addresses){
+			sendMessage(msg, address);
+		}
+	}
+	
+	/**
+	 * Send the specified message to the specified host
+	 * @param msg
+	 * @param host
+	 */
+	private void sendMessage(String msg, String host){
+		
+	}
+	
+	/**
+	 * Checks all the 254 available IP adresses for an open detect port. If a connection is established it is added to the list
+	 */
+	private void checkOpenSockets(){
+		String subnet = "192.168.178.";
+		String address = subnet + "0";
+		int i, max = 254;
+		for(i = 0; i <= max; i++){
+			address = subnet + i;
+			messageLabel.setText(address);
+			if(checkAddress(address)){
+				System.out.println("Found connection at: " + address);
+				addresses.add(address);
+			}
+		}
+	}
+	
+	/**
+	 * Checks the provided IP for an open detect port
+	 * @param host
+	 * @return
+	 */
+	private boolean checkAddress(String host){
+		boolean connected = false;
+		Socket s = new Socket();
+		try{
+			InetSocketAddress socketAddress = new InetSocketAddress(host, detectPort);
+			s.connect(socketAddress, 40);
+			connected = true;
+		}catch(Exception e){
+			//do nothing
+		}finally{
+			try{
+				s.close();
+			}catch(Exception e){
+				//do nothing again
+			}
+		}
+		return connected;
+	}
+	
+	/**
+	 * Loads all the images
+	 */
+	private void getImages(){
+		APP_ICON = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trb1914/lan/icon.png"));
+	}
+	
+	
+}

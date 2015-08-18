@@ -1,0 +1,221 @@
+package trb1914.greekType;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeInputEvent;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
+import org.jnativehook.mouse.NativeMouseEvent;
+import org.jnativehook.mouse.NativeMouseListener;
+/**
+ * Customized JNativeHook implementation. 
+ * @author Mees Gelein
+ */
+public class TypeListener implements NativeKeyListener, NativeMouseListener{
+
+	/**A list of keyCodes that should be consumed*/
+	public Vector<Integer> toConsume = new Vector<Integer>();
+	public GreekType mainApp;
+	/**
+	 * Creates a new customized jnativehook listener
+	 */
+	public TypeListener(GreekType parent){
+		//Disables the atrocious amount of logging by default :)
+		Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+		logger.setLevel(Level.WARNING);
+
+		//sets a ref to the GreekType main Class
+		mainApp = parent;
+		
+		//sets all the keyCodes that should be consumed
+		setConsumables();
+
+		//unregisters any previous hooks and registers a new one
+		try{
+			GlobalScreen.unregisterNativeHook();
+			GlobalScreen.registerNativeHook();
+		}catch(Exception e){
+			System.out.println("Tried to register native hook, but failed :(");
+		}
+		//adds this class as the actual listener
+		GlobalScreen.getInstance().addNativeKeyListener(this);
+		GlobalScreen.getInstance().addNativeMouseListener(this);
+		GlobalScreen.getInstance().setEventDispatcher(new VoidExecutorService());
+	}
+
+	/**
+	 * Called when the mouse has been clicked
+	 */
+	public void nativeMouseClicked(NativeMouseEvent e) {}
+
+	/**
+	 * Called when a mousebutton is pressed
+	 */
+	public void nativeMousePressed(NativeMouseEvent e) {}
+
+	/**
+	 * Called when a mousebutton is released
+	 */
+	public void nativeMouseReleased(NativeMouseEvent e) {}
+
+	/**
+	 * Called when a key is first pressed
+	 */
+	public void nativeKeyPressed(NativeKeyEvent e) {
+		
+		if (isConsumable(e)) {
+			mainApp.keyMessage(parseKeyEvent(e));
+			try {
+				Field f = NativeInputEvent.class.getDeclaredField("reserved");
+				f.setAccessible(true);
+				f.setShort(e, (short) 0x01);
+			}
+			catch (Exception ex) {
+				System.out.println("[TypeListener]: Couldn't consume the keyEvent");
+			}
+		}else if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals("Backspace")){
+			KeyPress.prevChar = "";
+		};
+	}
+
+	/**
+	 * Called when a key is released
+	 */
+	public void nativeKeyReleased(NativeKeyEvent e) {
+		if (isConsumable(e)) {
+			try {
+				Field f = NativeInputEvent.class.getDeclaredField("reserved");
+				f.setAccessible(true);
+				f.setShort(e, (short) 0x01);
+			}
+			catch (Exception ex) {
+				System.out.println("[TypeListener]: Couldn't consume the keyEvent");
+			}
+		}
+	}
+
+	/**
+	 * When a key is typed, this is called. Currently doesn't seem to work properly?
+	 */
+	public void nativeKeyTyped(NativeKeyEvent e) {}
+
+	/**
+	 * Removes all native hooks
+	 */
+	public void unhook(){
+		GlobalScreen.unregisterNativeHook();
+	}
+
+	/**
+	 * Private class from the jnativehook google code page
+	 */
+	private class VoidExecutorService extends AbstractExecutorService {
+		private boolean isRunning;
+
+		public VoidExecutorService() {
+			isRunning = true;
+		}
+
+		public void shutdown() {
+			isRunning = false;
+		}
+
+		public List<Runnable> shutdownNow() {
+			return new ArrayList<Runnable>(0);
+		}
+
+		public boolean isShutdown() {
+			return !isRunning;
+		}
+
+		public boolean isTerminated() {
+			return !isRunning;
+		}
+
+		public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+			return true;
+		}
+
+		public void execute(Runnable r) {
+			r.run();
+		}
+	}
+	/**
+	 * Adds all the keys that should be consumed to the toConsume list
+	 */
+	private void setConsumables(){
+		toConsume.add(NativeKeyEvent.VC_A);
+		toConsume.add(NativeKeyEvent.VC_B);
+		toConsume.add(NativeKeyEvent.VC_C);
+		toConsume.add(NativeKeyEvent.VC_D);
+		toConsume.add(NativeKeyEvent.VC_E);
+		toConsume.add(NativeKeyEvent.VC_F);
+		toConsume.add(NativeKeyEvent.VC_G);
+		toConsume.add(NativeKeyEvent.VC_H);
+		toConsume.add(NativeKeyEvent.VC_I);
+		toConsume.add(NativeKeyEvent.VC_J);
+		toConsume.add(NativeKeyEvent.VC_K);
+		toConsume.add(NativeKeyEvent.VC_L);
+		toConsume.add(NativeKeyEvent.VC_M);
+		toConsume.add(NativeKeyEvent.VC_N);
+		toConsume.add(NativeKeyEvent.VC_O);
+		toConsume.add(NativeKeyEvent.VC_P);
+		toConsume.add(NativeKeyEvent.VC_Q);
+		toConsume.add(NativeKeyEvent.VC_R);
+		toConsume.add(NativeKeyEvent.VC_S);
+		toConsume.add(NativeKeyEvent.VC_T);
+		toConsume.add(NativeKeyEvent.VC_U);
+		toConsume.add(NativeKeyEvent.VC_V);
+		toConsume.add(NativeKeyEvent.VC_W);
+		toConsume.add(NativeKeyEvent.VC_X);
+		toConsume.add(NativeKeyEvent.VC_Y);
+		toConsume.add(NativeKeyEvent.VC_Z);
+		toConsume.add(NativeKeyEvent.VC_SPACE);
+		toConsume.add(NativeKeyEvent.VC_QUOTE);
+		toConsume.add(NativeKeyEvent.VC_SHIFT_L);
+		toConsume.add(NativeKeyEvent.VC_SHIFT_R);
+		toConsume.add(NativeKeyEvent.VC_PERIOD);
+		toConsume.add(NativeKeyEvent.VC_COMMA);
+		toConsume.add(NativeKeyEvent.VC_BACKQUOTE);
+	}
+
+	/**
+	 * Decides if the provided NativeKeyEvent should be consumed.
+	 * If ctrl is pressed or this key is NOT in the toConsume list, the event will
+	 * NOT be consumed
+	 * @param e
+	 * @return
+	 */
+	private boolean isConsumable(NativeKeyEvent e){
+		boolean shouldConsume = false;
+		int i, max = toConsume.size();
+		for(i=0; i < max; i++){
+			if(toConsume.get(i) == e.getKeyCode()){
+				shouldConsume = true;
+				break;
+			}
+		}
+		if((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0) shouldConsume = false;
+		if((e.getModifiers() & NativeKeyEvent.ALT_MASK) != 0) shouldConsume = false;
+		return shouldConsume;
+	}
+	
+	/**
+	 * Tries to parse the keyEvent.
+	 * @param e
+	 * @return
+	 */
+	private KeyPress parseKeyEvent(NativeKeyEvent e){
+		String result = NativeKeyEvent.getKeyText(e.getKeyCode()).toLowerCase();
+		KeyPress keyPress = new KeyPress(result, ((e.getModifiers() & NativeKeyEvent.SHIFT_MASK) != 0));
+		return keyPress;
+	}
+}

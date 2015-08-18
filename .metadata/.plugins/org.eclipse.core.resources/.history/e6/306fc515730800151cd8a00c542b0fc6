@@ -1,0 +1,50 @@
+package trb1914.gui;
+
+import java.awt.GridLayout;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import trb1914.debug.Debug;
+import trb1914.helper.SystemHelper;
+
+public class OnScreenKeyboard extends JPanel {
+
+	private static final String[][] keys = new String[][]{{"a", "b", "c"}, {"a", "b", "c"}};
+	
+	/**
+	 * When you launch this class seperately you launch a test version
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		SystemHelper.setSystemDefaultLF();
+		JFrame frame = new JFrame();
+		frame.add(new OnScreenKeyboard());
+		frame.pack();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+	}
+	
+	/**
+	 * Creates a new OnScreenKeyboard Panel
+	 */
+	public OnScreenKeyboard() {
+		makeGUI();
+	}
+	
+	/**
+	 * Populates this panel
+	 */
+	private void makeGUI(){
+		setLayout(new GridLayout(keys.length, 1));
+		for(String[] row : keys){
+			JPanel rowPanel = new JPanel();
+			add(rowPanel);
+			for(String key : row){
+				
+			}
+		}
+	}
+
+}

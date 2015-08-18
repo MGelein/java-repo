@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;search_16.png&apos; to &apos;PictureTagger/src/trb1914.picturetagger.img&apos;&#x0D;&#x0A;- Original project: &apos;FietsInlever&apos;&#x0D;&#x0A;- Destination element: &apos;PictureTagger/src/trb1914.picturetagger.img&apos;&#x0D;&#x0A;- Original element: &apos;search_16.png&apos;" description="Copy file" destination="=PictureTagger/src&lt;trb1914.picturetagger.img" element1="src/trb1914/img/search_16.png" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1422015088139" units="0" version="1.0"/>
+</session>

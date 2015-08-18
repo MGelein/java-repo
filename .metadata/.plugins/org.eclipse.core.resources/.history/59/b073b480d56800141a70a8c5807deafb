@@ -1,0 +1,12 @@
+package trb1914.greekType;
+
+public class KeyPress {
+
+	public boolean shiftPressed = false;
+	public String text = "";
+	
+	public KeyPress(String text, boolean shiftPressed){
+		this.shiftPressed = shiftPressed;
+		this.text = text;
+	}
+}

@@ -1,0 +1,233 @@
+package trb1914.greekType;
+/**
+ * Simple data holder class that converts keyEvents into typable text
+ * @author Mees Gelein
+ *
+ */
+public class KeyPress {
+
+	public static String prevChar = "";
+	public boolean shiftPressed = false;
+	public String text = "";
+	
+	public KeyPress(String text, boolean shiftPressed){
+		this.shiftPressed = shiftPressed;
+		this.text = text;
+		if(text.length() > 1){//if it's not just a single character
+			parseText(text);
+		}
+	}
+	
+	/**
+	 * Does the actual meat of the parsing. Optimizing should probably be done over here :)
+	 * @return
+	 */
+	public static String getText(KeyPress keyPress){
+		boolean shiftPressed = keyPress.shiftPressed;
+		String text = keyPress.text;
+		if(shiftPressed) text = text.toUpperCase();
+		switch(text){
+		case "a":
+			return doAlpha();
+		case "A":
+			return "Α";
+		case "b":
+			return "β";
+		case "B":
+			return "Β";
+		case "d":
+			return "δ";
+		case "D":
+			return "Δ";
+		case "e":
+			return "ε";
+		case "E":
+			return "Ε";
+		case "f":
+			return "φ";
+		case "F":
+			return "Φ";
+		case "g":
+			return "γ";
+		case "G":
+			return "Γ";
+		case "i":
+			return "ι";
+		case "I":
+			return "Ι";
+		case "k":
+			return "κ";
+		case "K":
+			return "Κ";
+		case "l":
+			return "λ";
+		case "L":
+			return "Λ";
+		case "m":
+			return "μ";
+		case "M":
+			return "Μ";
+		case "n":
+			return "ν";
+		case "N":
+			return "Ν";
+		case "o":
+			return "ο";
+		case "O":
+			return "Ο";
+		case "p":
+			return "π";
+		case "P":
+			return "Π";
+		case "r":
+			return "ρ";
+		case "R":
+			return "Ρ";
+		case "s":
+			return "σ";
+		case "S":
+			return "Σ";
+		case "t":
+			return "τ";
+		case "T":
+			return "Τ";
+		case "u":
+			return "υ";
+		case "U":
+			return "Υ";
+		case "x":
+			return "ξ";
+		case "X":
+			return "Ξ";
+		case "z":
+			return "ζ";
+		case "Z":
+			return "Ζ";
+		case " ":
+			if(prevChar.equals("σ")){
+				GreekType.typeRobot.deleteCharacters(1);
+				return "ς ";
+			}else{
+				return " ";
+			}
+		case ".":
+			if(prevChar.equals("σ")){
+				GreekType.typeRobot.deleteCharacters(1);
+				return "ς.";
+			}else{
+				return ".";
+			}
+		case ",":
+			if(prevChar.equals("σ")){
+				GreekType.typeRobot.deleteCharacters(1);
+				return "ς,";
+			}else{
+				return ",";
+			}
+		case "'":
+			return doSingleQuote();
+		}
+		return text;
+	}
+	
+	private static String doSingleQuote(){
+		if(prevChar.equals("α")) {oneBack(); return "ά";}
+		else if(prevChar.equals("ά")) {oneBack(); return "ά";}
+		else if(prevChar.equals("ὰ")) {oneBack(); return "ά";}
+		else if(prevChar.equals("ᾶ")) {oneBack(); return "ά";}
+		else if(prevChar.equals("ἀ")) {oneBack(); return "ἄ";}
+		else if(prevChar.equals("ἄ")) {oneBack(); return "ἄ";}
+		else if(prevChar.equals("ἂ")) {oneBack(); return "ἄ";}
+		else if(prevChar.equals("ἆ")) {oneBack(); return "ἄ";}
+		else if(prevChar.equals("ἁ")) {oneBack(); return "ἅ";}
+		else if(prevChar.equals("ἅ")) {oneBack(); return "ἅ";}
+		else if(prevChar.equals("ἃ")) {oneBack(); return "ἅ";}
+		else if(prevChar.equals("ἇ")) {oneBack(); return "ἅ";}
+		else if(prevChar.equals("ᾀ")) {oneBack(); return "ᾄ";}
+		else if(prevChar.equals("ᾄ")) {oneBack(); return "ᾄ";}
+		else if(prevChar.equals("ᾂ")) {oneBack(); return "ᾄ";}
+		else if(prevChar.equals("ᾆ")) {oneBack(); return "ᾄ";}
+		else if(prevChar.equals("ᾁ")) {oneBack(); return "ᾅ";}
+		else if(prevChar.equals("ᾅ")) {oneBack(); return "ᾅ";}
+		else if(prevChar.equals("ᾃ")) {oneBack(); return "ᾅ";}
+		else if(prevChar.equals("ᾇ")) {oneBack(); return "ᾅ";}
+		else if(prevChar.equals("ε")) {oneBack(); return "έ";}
+		else if(prevChar.equals("έ")) {oneBack(); return "έ";}
+		else if(prevChar.equals("ὲ")) {oneBack(); return "έ";}
+		else if(prevChar.equals("ἐ")) {oneBack(); return "ἔ";}
+		else if(prevChar.equals("ἔ")) {oneBack(); return "ἔ";}
+		else if(prevChar.equals("ἒ")) {oneBack(); return "ἔ";}
+		else if(prevChar.equals("ἑ")) {oneBack(); return "ἕ";}
+		else if(prevChar.equals("ἕ")) {oneBack(); return "ἕ";}
+		else if(prevChar.equals("ἓ")) {oneBack(); return "ἕ";}
+		else if(prevChar.equals("ι")) {oneBack(); return "ί";}
+		else if(prevChar.equals("ί")) {oneBack(); return "ί";}
+		else if(prevChar.equals("ὶ")) {oneBack(); return "ί";}
+		else if(prevChar.equals("ῖ")) {oneBack(); return "ί";}
+		else if(prevChar.equals("ἰ")) {oneBack(); return "ἴ";}
+		else if(prevChar.equals("ἴ")) {oneBack(); return "ἴ";}
+		else if(prevChar.equals("ἲ")) {oneBack(); return "ἴ";}
+		else if(prevChar.equals("ἶ")) {oneBack(); return "ἴ";}
+		else if(prevChar.equals("ἱ")) {oneBack(); return "ἵ";}
+		else if(prevChar.equals("ἵ")) {oneBack(); return "ἵ";}
+		else if(prevChar.equals("ἳ")) {oneBack(); return "ἵ";}
+		else if(prevChar.equals("ἷ")) {oneBack(); return "ἵ";}
+		else if(prevChar.equals("ο")) {oneBack(); return "ό";}
+		else if(prevChar.equals("ό")) {oneBack(); return "ό";}
+		else if(prevChar.equals("ὸ")) {oneBack(); return "ό";}
+		else if(prevChar.equals("ὀ")) {oneBack(); return "ὄ";}
+		else if(prevChar.equals("ὄ")) {oneBack(); return "ὄ";}
+		else if(prevChar.equals("ὂ")) {oneBack(); return "ὄ";}
+		else if(prevChar.equals("ὁ")) {oneBack(); return "ὅ";}
+		else if(prevChar.equals("ὅ")) {oneBack(); return "ὅ";}
+		else if(prevChar.equals("ὃ")) {oneBack(); return "ὅ";}
+		else if(prevChar.equals("υ")) {oneBack(); return "ύ";}
+		else if(prevChar.equals("ύ")) {oneBack(); return "ύ";}
+		else if(prevChar.equals("ὺ")) {oneBack(); return "ύ";}
+		else if(prevChar.equals("ῦ")) {oneBack(); return "ύ";}
+		return "";
+	}
+	
+	/**
+	 * All logic involved when the alpha key is pressed
+	 * @return
+	 */
+	private static String doAlpha(){
+		if(prevChar.equals("h")){
+			GreekType.typeRobot.deleteCharacters(1);
+			return "ἁ";
+		}else if(prevChar.equals("H")){
+			GreekType.typeRobot.deleteCharacters(1);
+			return "Ἁ";
+		}
+		return "α";
+	}
+	
+	/**
+	 * Backspaces one space
+	 */
+	private static void oneBack(){
+		GreekType.typeRobot.deleteCharacters(1);
+	}
+	
+	/**
+	 * Parses the other Strings like "space", "left shift" etc...
+	 * @param s
+	 */
+	private void parseText(String s){
+		if(s.startsWith("space")){ 
+			text = " ";
+		}else if(s.startsWith("quote")){
+			text = "'";
+			if(shiftPressed) text = "\"";
+		}else if(s.startsWith("period")){
+			text = ".";
+			if(shiftPressed) text = ">";
+		}else if(s.startsWith("comma")){
+			text = ",";
+			if(shiftPressed) text = "<";
+		}else{//if we don't want this special keypress to be shown (e.g shift)
+			text = "";
+		}
+	}
+}

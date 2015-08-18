@@ -1,0 +1,12 @@
+1420475766090	Rename field 'detectPort'
+1420475772934	Rename field 'port'
+1420475777293	Rename field 'POR'
+1420476021499	Rename local variable 'detectSocket'
+1420476030274	Rename local variable 'sckt'
+1420550754226	Rename method 'parseInput'
+1420727127941	Copy compilation unit
+1420727196426	Delete element
+1420732993904	Delete element
+1420733953889	Delete element
+1420733966889	Rename resource 'prefs.properties'
+1420977110587	Rename local variable 'b'

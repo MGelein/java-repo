@@ -1,0 +1,141 @@
+package trb1914.greekType;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeInputEvent;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
+import org.jnativehook.mouse.NativeMouseEvent;
+import org.jnativehook.mouse.NativeMouseListener;
+/**
+ * Customized JNativeHook implementation. 
+ * @author Mees Gelein
+ */
+public class TypeListener implements NativeKeyListener, NativeMouseListener{
+
+	/**
+	 * Creates a new customized jnativehook listener
+	 */
+	public TypeListener(){
+		//Disables the atrocious amount of logging by default :)
+		Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+		logger.setLevel(Level.WARNING);
+		
+		//unregisters any previous hooks and registers a new one
+		try{
+			GlobalScreen.unregisterNativeHook();
+			GlobalScreen.registerNativeHook();
+		}catch(Exception e){
+			System.out.println("Tried to register native hook, but failed :(");
+		}
+		//adds this class as the actual listener
+		GlobalScreen.getInstance().addNativeKeyListener(this);
+		GlobalScreen.getInstance().addNativeMouseListener(this);
+		GlobalScreen.getInstance().setEventDispatcher(new VoidExecutorService());
+	}
+	
+	/**
+	 * Called when the mouse has been clicked
+	 */
+	public void nativeMouseClicked(NativeMouseEvent e) {}
+
+	/**
+	 * Called when a mousebutton is pressed
+	 */
+	public void nativeMousePressed(NativeMouseEvent e) {}
+
+	/**
+	 * Called when a mousebutton is released
+	 */
+	public void nativeMouseReleased(NativeMouseEvent e) {}
+
+	/**
+	 * Called when a key is first pressed
+	 */
+	public void nativeKeyPressed(NativeKeyEvent e) {
+		
+		System.out.println((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0);
+		if (e.getKeyCode() == NativeKeyEvent.VC_B) {
+            //System.out.print("Attempting to consume B event...\t");
+            try {
+                Field f = NativeInputEvent.class.getDeclaredField("reserved");
+                f.setAccessible(true);
+                f.setShort(e, (short) 0x01);
+            }
+            catch (Exception ex) {
+               System.out.println("Couldn't consume the keyEvent");
+            }
+        }
+	}
+
+	/**
+	 * Called when a key is released
+	 */
+	public void nativeKeyReleased(NativeKeyEvent e) {
+		if (e.getKeyCode() == NativeKeyEvent.VC_B) {
+            //System.out.print("Attempting to consume B event...\t");
+            try {
+                Field f = NativeInputEvent.class.getDeclaredField("reserved");
+                f.setAccessible(true);
+                f.setShort(e, (short) 0x01);
+            }
+            catch (Exception ex) {
+               System.out.println("Couldn't consume the keyEvent");
+            }
+        }
+	}
+
+	/**
+	 * When a key is typed, this is called. Currently doesn't seem to work properly?
+	 */
+	public void nativeKeyTyped(NativeKeyEvent e) {}
+
+	/**
+	 * Removes all native hooks
+	 */
+	public void unhook(){
+		GlobalScreen.unregisterNativeHook();
+	}
+	
+	/**
+	 * Private class from the jnativehook google code page
+	 */
+	private class VoidExecutorService extends AbstractExecutorService {
+        private boolean isRunning;
+
+        public VoidExecutorService() {
+            isRunning = true;
+        }
+
+        public void shutdown() {
+            isRunning = false;
+        }
+
+        public List<Runnable> shutdownNow() {
+            return new ArrayList<Runnable>(0);
+        }
+
+        public boolean isShutdown() {
+            return !isRunning;
+        }
+
+        public boolean isTerminated() {
+            return !isRunning;
+        }
+
+        public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+            return true;
+        }
+
+        public void execute(Runnable r) {
+            r.run();
+        }
+    }
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename method &apos;trb1914.cmd.CMDLibrary.download(...)&apos; to &apos;get&apos;&#x0D;&#x0A;- Original project: &apos;CMDTesting&apos;&#x0D;&#x0A;- Original element: &apos;trb1914.cmd.CMDLibrary.download(...)&apos;&#x0D;&#x0A;- Renamed element: &apos;trb1914.cmd.CMDLibrary.get(...)&apos;&#x0D;&#x0A;- Update references to refactored element" delegate="false" deprecate="false" description="Rename method &apos;download&apos;" flags="589826" id="org.eclipse.jdt.ui.rename.method" input="/src&lt;trb1914.cmd{CMDLibrary.java[CMDLibrary~download~\[QString;" name="get" references="true" stamp="1437404845796" version="1.0"/>
+</session>

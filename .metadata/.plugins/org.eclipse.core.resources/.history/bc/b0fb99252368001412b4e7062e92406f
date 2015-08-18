@@ -1,0 +1,33 @@
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+
+
+public class Test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		final Robot robot;
+		try {
+			robot = new Robot();
+			new Thread(new Runnable(){
+				public void run(){
+					
+					robot.keyPress(KeyEvent.VK_A);
+					try{
+						Thread.sleep(100);
+					}catch(Exception e){
+						
+					}
+					run();
+				}
+			}).start();
+		} catch (AWTException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+	}
+
+}

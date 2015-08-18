@@ -1,0 +1,74 @@
+package trb1914.greekType;
+/**
+ * Simple data holder class that converts keyEvents into typable text
+ * @author Mees Gelein
+ *
+ */
+public class KeyPress {
+
+	public static String prevChar = "";
+	public boolean shiftPressed = false;
+	public String text = "";
+	
+	public KeyPress(String text, boolean shiftPressed){
+		this.shiftPressed = shiftPressed;
+		this.text = text;
+		if(text.length() > 1){//if it's not just a single character
+			parseText(text);
+		}
+	}
+	
+	public String getText(){
+		switch(text){
+		case "a":
+			return "α";
+		case "b":
+			return "α";
+		case "c":
+			return "α";
+		case "d":
+			return "α";
+		case "e":
+			return "α";
+		case "f":
+			return "α";
+		case "g":
+			return "α";
+		case "h":
+			return "α";
+		case "i":
+			return "α";
+		case "j":
+			return "α";
+		case "k":
+			return "α";
+		case "l":
+			return "α";
+		case "m":
+			return "α";
+		case "n":
+			return "α";
+		case "o":
+			return "α";
+		case "p":
+			return "α";
+		}
+		
+		return text;
+	}
+	
+	/**
+	 * Parses the other Strings like "space", "left shift" etc...
+	 * @param s
+	 */
+	private void parseText(String s){
+		if(s.startsWith("space")){ 
+			text = " ";
+		}else if(s.startsWith("quote")){
+			text = "'";
+			if(shiftPressed) text = "\"";
+		}else{//if we don't want this special keypress to be shown (e.g shift)
+			text = "";
+		}
+	}
+}

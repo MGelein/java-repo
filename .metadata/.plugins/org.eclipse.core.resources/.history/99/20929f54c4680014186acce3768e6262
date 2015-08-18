@@ -1,0 +1,81 @@
+import java.awt.AWTException;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
+import org.jnativehook.mouse.NativeMouseEvent;
+import org.jnativehook.mouse.NativeMouseListener;
+
+import trb1914.greekType.TypeRobot;
+
+
+public class Test implements NativeKeyListener, NativeMouseListener{
+
+	private TypeRobot typeRobot;
+	
+	public static void main(String[] args) {
+		LogManager.getLogManager().reset();
+		Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+		logger.setLevel(Level.WARNING);
+		
+		try{
+			GlobalScreen.registerNativeHook();
+		}catch(Exception e){
+			System.out.println("Couldn't register keyboard hook");
+			System.exit(1);
+		}
+		
+		GlobalScreen.getInstance().addNativeKeyListener(new Test());
+	}
+	
+	public Test(){
+		try {
+			typeRobot = new TypeRobot();
+		} catch (AWTException e) {
+			System.out.println("Coulnd't initialize Robot");
+		}
+	}
+	
+	@Override
+	public void nativeKeyPressed(NativeKeyEvent e) {
+		System.out.println("Key Pressed: " + NativeKeyEvent.getKeyText(e.getKeyCode()) + " Modifiers: " + e.getModifiers());
+		
+        if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
+                GlobalScreen.unregisterNativeHook();
+        }
+	}
+
+	@Override
+	public void nativeKeyReleased(NativeKeyEvent e) {
+		System.out.println("Key Released: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
+	}
+
+	/**
+	 * For some reason this is not working properly
+	 */
+	@Override
+	public void nativeKeyTyped(NativeKeyEvent e) {
+		//System.out.println("Key Typed: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
+	}
+
+	@Override
+	public void nativeMouseClicked(NativeMouseEvent e) {
+		System.out.println("Mouse clicked");
+	}
+
+	@Override
+	public void nativeMousePressed(NativeMouseEvent e) {
+		System.out.println("Mouse pressed");
+	}
+
+	@Override
+	public void nativeMouseReleased(NativeMouseEvent e) {
+		System.out.println("Mouse released");
+	}
+
+}

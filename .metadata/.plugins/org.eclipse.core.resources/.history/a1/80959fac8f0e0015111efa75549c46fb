@@ -1,0 +1,44 @@
+package trb1914.protagoras.data;
+
+import org.w3c.dom.Element;
+
+import trb1914.xml.XMLDocument;
+
+/**
+ * This data object holds all the parsed data from an protagoras parsed
+ * xml file
+ * @author Mees Gelein
+ */
+public class PDocument {
+
+	/**The title of the document that has been encoded*/
+	public String title = "";
+	/**The description of the locus. If this is left empty, a locus will be generated
+	 * from the locusFrom and locusTo variables*/
+	public String locus = "";
+	/**The value of the locus from attribute*/
+	public String locusFrom = "";
+	/**The value of the locus to attribute*/
+	public String locusTo = "";
+	/**The author of the document that has been encoded*/
+	public String author = "";
+	/**A description of the original date of this document*/
+	public String origDate = "";
+	/**The value of the origDate NotBefore attribute*/
+	public String origDateNotBefore = "";
+	/**The value of the origDate notAfter attribute*/
+	public String origDateNotAfter = "";
+	/**A description of the original place of origin of this document*/
+	public String origPlace;
+	/**The date this document (the actual file) has been last edited*/
+	public String docDate = "";
+	/**The usage license for this document*/
+	public String availability = "This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. ";
+	
+	/**
+	 * Saves this document back into the XMLDocument
+	 */
+	public void flush(XMLDocument xmlDoc){
+		
+	}
+}

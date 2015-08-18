@@ -1,0 +1,12 @@
+package trb1914.gui;
+
+import javax.swing.JPanel;
+
+public class OnScreenKeyboard extends JPanel {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

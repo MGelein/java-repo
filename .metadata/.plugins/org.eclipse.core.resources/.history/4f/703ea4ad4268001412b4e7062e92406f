@@ -1,0 +1,42 @@
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+
+
+public class Test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		final Robot robot;
+		
+		try {
+			robot = new Robot();
+			new Thread(new Runnable(){
+				public void run(){
+					
+					robot.keyPress(KeyEvent.VK_ALT);
+					robot.keyPress(KeyEvent.VK_NUMPAD9);
+					robot.keyRelease(KeyEvent.VK_NUMPAD9);
+					robot.keyPress(KeyEvent.VK_4);
+					robot.keyRelease(KeyEvent.VK_4);
+					robot.keyPress(KeyEvent.VK_5);
+					robot.keyRelease(KeyEvent.VK_5);
+					robot.keyRelease(KeyEvent.VK_ALT);
+					
+					try{
+						Thread.sleep(100);
+					}catch(Exception e){
+						
+					}
+					run();
+				}
+			}).start();
+		} catch (AWTException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+	}
+
+}

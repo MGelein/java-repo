@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;NumberOnlyFilter.java&apos; to &apos;DatePickerTest/src/trb1914&apos;&#x0D;&#x0A;- Original project: &apos;FietsInlever&apos;&#x0D;&#x0A;- Destination element: &apos;DatePickerTest/src/trb1914&apos;&#x0D;&#x0A;- Original element: &apos;trb1914.filter.NumberOnlyFilter.java&apos;" description="Copy compilation unit" destination="=DatePickerTest/src&lt;trb1914" element1="/src&lt;trb1914.filter{NumberOnlyFilter.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1414422169284" units="1" version="1.0"/>
+</session>

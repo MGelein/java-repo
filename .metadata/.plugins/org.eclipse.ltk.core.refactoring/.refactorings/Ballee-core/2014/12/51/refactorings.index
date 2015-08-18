@@ -1,0 +1,6 @@
+1418934534981	Rename method 'getWorld'
+1418936770712	Rename field 'shape'
+1418936775240	Rename field 'polyShape'
+1419023364858	Rename type 'PhysBodyDe'
+1419026122526	Delete element
+1419027290036	Rename method 'makeStageBounds'

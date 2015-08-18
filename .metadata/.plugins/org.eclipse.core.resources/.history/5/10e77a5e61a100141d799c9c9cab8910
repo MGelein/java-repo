@@ -1,0 +1,125 @@
+package trb1914.picturetagger.data;
+
+import java.awt.Image;
+import java.io.File;
+import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+import trb1914.debug.Debug;
+import trb1914.helper.FileHelper;
+import trb1914.helper.ImageHelper;
+import trb1914.picturetagger.gui.ViewTile;
+
+/**
+ * Simple data holder object. Also used to show
+ * the data in the table
+ * @author Mees Gelein
+ */
+public class ImageData {
+
+	///The amt of threads used to create the thumbnail
+	public static int THUMB_THREADS = 5;
+	
+	public static ImageData cHover = null;
+	///The default icon
+	public static final ImageIcon DEFAULT_ICON = ImageHelper.getImageIcon("/trb1914/picturetagger/img/document_64.png");
+	///The path of the file
+	private String filePath = "";
+	///The fileName
+	public String fileName;
+	///The thumbnail of the image we're showing
+	private ImageIcon thumbnail = DEFAULT_ICON;
+	///The label that holds the icon
+	private JLabel thumbLabel = new JLabel(DEFAULT_ICON);
+
+	/**
+	 * Creates a new ImageData instance
+	 * @param path
+	 */
+	public ImageData(String path){
+		thumbLabel.setEnabled(false);
+		filePath = path;
+		if(fileName == null){
+			File f = new File(filePath);
+			if(f.exists()){
+				fileName = FileHelper.getFileName(f);
+			}
+		}
+
+	}
+
+	/**
+	 * Gets the associated tags. Empty if this has no tags
+	 * @return
+	 */
+	public Tag getTags(){
+		return TagParser.get(filePath);
+
+	}
+
+	/**
+	 * Sets the thumbnail to the provided img
+	 * @param img
+	 */
+	public void setThumb(Image img){
+		thumbnail = new ImageIcon(img);
+		thumbLabel.setIcon(thumbnail);
+		thumbLabel.setEnabled(true);
+	}
+
+	/**
+	 * The label that displays the thumnnail
+	 * @return
+	 */
+	public JLabel getThumb(){
+		return thumbLabel;
+	}
+
+	/**
+	 * Makes the thumbnails for the files in the list
+	 * @param list
+	 */
+	public static void makeThumbs(ArrayList<ImageData> list){
+		int i, max = THUMB_THREADS;
+		for(i = 0; i < max ; i++){
+			createThumbnailThread(i, list);
+		}
+	}
+	
+	/**
+	 * Creates one thumbnailing thread
+	 * @param startIndex
+	 * @param list
+	 */
+	private static void createThumbnailThread(int startIndex, ArrayList<ImageData> list){
+		new Thread(new Runnable() {
+			public void run() {
+				int i, max = list.size();
+				for(i = startIndex; i < max; i += THUMB_THREADS){
+					getThumbnail(list.get(i));
+				}
+			}
+		}).start();
+	}
+
+	/**
+	 * Tries to load the thumbnail for a specific ImageData object
+	 * @param d
+	 */
+	private static void getThumbnail(ImageData d){
+		File f = new File(d.filePath);
+		if(f.exists()){
+			try{
+				if(!d.thumbLabel.isEnabled()){//if no thumb has been loaded yet
+					Image img = ImageIO.read(f);
+					img = img.getScaledInstance(ViewTile.THUMB_SIZE, ViewTile.THUMB_SIZE, Image.SCALE_FAST);
+					d.setThumb(img);
+				}
+			}catch(Exception e){e.printStackTrace(); Debug.println(f.getAbsolutePath());}
+		}else{
+		}
+	}
+}

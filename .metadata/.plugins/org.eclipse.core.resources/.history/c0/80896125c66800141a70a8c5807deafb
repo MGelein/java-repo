@@ -1,0 +1,9 @@
+package trb1914.greekType;
+/**
+ * Main class of the Greek typing application
+ * @author Mees
+ *
+ */
+public class GreekType {
+
+}

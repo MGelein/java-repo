@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;KeyMouse/src/trb1914/keymouse/logo-notext-square.png&apos; to &apos;logo.png&apos;" description="Rename resource &apos;logo-notext-square.png&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/trb1914/keymouse/logo-notext-square.png" name="logo.png" stamp="1431436091767" updateReferences="true"/>
+</session>

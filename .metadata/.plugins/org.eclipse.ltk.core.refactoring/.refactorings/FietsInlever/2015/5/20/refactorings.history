@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;rentals&apos; in &apos;trb1914.RentViewer.payAll()&apos; to &apos;toPay&apos;&#x0D;&#x0A;- Original project: &apos;FietsInlever&apos;&#x0D;&#x0A;- Original element: &apos;trb1914.RentViewer.payAll().rentals&apos;&#x0D;&#x0A;- Renamed element: &apos;rentals&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename local variable &apos;rentals&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;trb1914{RentViewer.java[RentViewer~payAll@rentals!13672!13723!13690!13696!QArrayList\&lt;QString;&gt;;!0!false" name="toPay" references="true" stamp="1431856691188" version="1.0"/>
+</session>

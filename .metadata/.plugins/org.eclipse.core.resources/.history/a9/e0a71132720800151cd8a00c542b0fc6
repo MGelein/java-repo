@@ -1,0 +1,18 @@
+package trb1914.gui;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class OnScreenKeyboard extends JPanel {
+
+	/**
+	 * When you launch this class seperately you launch a test version
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		JFrame frame = new JFrame();
+		frame.add(new OnScreenKeyboard());
+		frame.pack();
+	}
+
+}

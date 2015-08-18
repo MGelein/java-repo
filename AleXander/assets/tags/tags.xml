@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tags>
+	<entry name="Word - General" description="A general word with only a type attribute. Word types include: noun, verb and article">
+		<w type="noun"/>
+	</entry >
+	<entry name="Word - Noun" description="A word of type noun with case and lemma attributes">
+		<w type="noun" number="singular" case="nominative" lemma="lemma"/>
+	</entry>
+	<entry name="Word - Participle" description="A participle with case, lemma, mode, number and time attributes">
+		<w type="noun" case="nominative" lemma="lemma" mode="participle" number="singular" person="1st"/>
+	</entry>
+	<entry name="Word - Verb" description="A verb with case, lemma, mode, number and time attributes">
+		<w lemma="lemma" mode="indicative" number="singular" person="1st"/>
+	</entry>
+	<entry name="Multiword construction" description="A construction of multiple words">
+		<ab/>
+	</entry>
+	<entry name="Person Name" description="A name of a person">
+		<persName nymRef="person"/>
+	</entry>
+	<entry name="Additional Name" description="An additional name of a person">
+		<addName nymRef="person" type="patronymic"/>
+	</entry>
+	<entry name="Date Precise" description="A precise point in time">
+		<date when="0"/>
+	</entry>
+	<entry name="Date Approximation" description="A approximate date. ">
+		<date notBefore="0" notAfter="0"/>
+	</entry>
+	<entry name="Placename" description="A name of a place">
+		<placeName nymRef="place"/>
+	</entry>	
+	<entry name="Name without Reference" description="Any word or construction that is also a name">
+		<name/>
+	</entry>
+	<entry name="Title" description="A title of a work.">
+		<name nymRef="work" type="title"/>
+	</entry>
+</tags>

@@ -1,0 +1,16 @@
+[2014/06/08 13:18:27]
+[Main]: AleXander XML v1.1.11
+[Main]: Running on: Windows 7
+Allowed LF's on this system:
+1: Metal
+2: Nimbus
+3: CDE/Motif
+4: Windows
+5: Windows Classic
+[Main]: Used language: EN
+[Main]: Screensize: java.awt.Dimension[width=1366,height=768]
+[Main]: Appsize: java.awt.Dimension[width=1000,height=720]
+[Main]: Checking for updates...
+[Main]: Error with update-check
+[XMLParser]: TagsFile found: true
+[Main]: No backup found, goodbye..

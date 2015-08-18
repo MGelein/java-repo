@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;XMLParser.java&apos; to &apos;Memorator/src/trb1914.memorator.xml&apos;&#x0D;&#x0A;- Original project: &apos;FietsInlever&apos;&#x0D;&#x0A;- Destination element: &apos;Memorator/src/trb1914.memorator.xml&apos;&#x0D;&#x0A;- Original element: &apos;trb1914.XMLParser.java&apos;" description="Copy compilation unit" destination="=Memorator/src&lt;trb1914.memorator.xml" element1="/src&lt;trb1914{XMLParser.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1426591821861" units="1" version="1.0"/>
+</session>

@@ -1,0 +1,8 @@
+1434040382183	Rename local variable 'e'
+1434042285989	Rename local variable 'element'
+1434042385251	Rename field 'keywordsText'
+1434109713291	Rename field 'textTerms'
+1434113857318	Rename local variable 'document'
+1434123190321	Rename field 'newDoc'
+1434123676077	Rename field 'transDesc'
+1434124160732	Rename method 'newEmptyTranslation'

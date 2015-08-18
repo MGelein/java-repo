@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">
+		<item value="652" key="DIALOG_X_ORIGIN"/>
+		<item value="387" key="DIALOG_Y_ORIGIN"/>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="false" key="isRegEx"/>
+		<item value="Reader" key="selection"/>
+		<item value="false" key="casesensitive"/>
+		<item value="false" key="incremental"/>
+		<item value="true" key="wrap"/>
+		<item value="false" key="wholeword"/>
+		<list key="findhistory">
+			<item value="reader"/>
+			<item value="searchField"/>
+			<item value="subm"/>
+			<item value="remove"/>
+			<item value="closeWind"/>
+			<item value="closeW"/>
+			<item value="eastP"/>
+			<item value="Alles"/>
+		</list>
+		<list key="replacehistory">
+			<item value="ImageHelper.getImageIcon("/>
+			<item value=""/>
+			<item value="set"/>
+			<item value="&quot; + Registry.F6_KeyName + &quot;)"/>
+			<item value="&quot; + Registry.F5_KeyName + &quot;)"/>
+			<item value="&quot; + Registry.F4_KeyName + &quot;)"/>
+			<item value="&quot; + Registry.F3_KeyName + &quot;)"/>
+			<item value="&quot; + Registry.F2_KeyName + &quot;)"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item value="305" key="DIALOG_WIDTH"/>
+		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-15|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
+		<item value="444" key="DIALOG_HEIGHT"/>
+		<item value="1325" key="DIALOG_X_ORIGIN"/>
+		<item value="574" key="DIALOG_Y_ORIGIN"/>
+	</section>
+</section>

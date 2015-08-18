@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;XMLParser.java&apos; to &apos;EpiDoctor/src/trb1914.epidoctor.xml&apos;&#x0D;&#x0A;- Original project: &apos;AleXander&apos;&#x0D;&#x0A;- Destination element: &apos;EpiDoctor/src/trb1914.epidoctor.xml&apos;&#x0D;&#x0A;- Original element: &apos;trb1914.alexml.xml.XMLParser.java&apos;" description="Copy compilation unit" destination="=EpiDoctor/src&lt;trb1914.epidoctor.xml" element1="/src&lt;trb1914.alexml.xml{XMLParser.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1417267135840" units="1" version="1.0"/>
+</session>

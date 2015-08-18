@@ -1,0 +1,30 @@
+package trb1914.net;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+
+public class TestServer {
+
+	public static void main(String[] args) throws IOException {
+		String msg = "join!";
+		MulticastSocket socket = new MulticastSocket(12345);
+		socket.joinGroup(InetAddress.getByName("228.5.6.7"));
+		DatagramPacket msgPacket = new DatagramPacket(msg.getBytes(), msg.getBytes().length, InetAddress.getByName("228.5.6.7"), 12345);
+		socket.send(msgPacket);
+		System.out.println("Message sent");
+		
+		byte[] buffer = new byte[msg.getBytes().length];
+		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+		socket.receive(packet);
+		System.out.println(new String(packet.getData()));
+		socket.receive(packet);
+		System.out.println(new String(packet.getData()));
+		
+		socket.leaveGroup(InetAddress.getByName("228.5.6.7"));
+		socket.close();
+		
+	}
+
+}
