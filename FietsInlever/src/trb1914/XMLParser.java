@@ -21,6 +21,7 @@ import trb1914.data.Registry;
 import trb1914.data.Rental;
 import trb1914.data.RentalItem;
 import trb1914.debug.Debug;
+import trb1914.helper.FileHelper;
 import trb1914.util.LoaderPane;
 /**
  * class that does the xml parsing and probably also the coding?
@@ -140,8 +141,25 @@ public class XMLParser {
 	 * in the registry
 	 * @param rentals
 	 */
-	public static void saveRentals(ArrayList<Rental> rentals){
-		saveRentals(rentals, new File(Registry.RENTALS_FILE_LOCATION));
+	public static void saveRentals(ArrayList<Rental> rentals) {
+		//first move all backup files up one and remove the oldest backup
+		File f5 = new File(Registry.RENTALS_FILE_LOCATION + "_5");
+		File f4 = new File(Registry.RENTALS_FILE_LOCATION + "_4");
+		File f3 = new File(Registry.RENTALS_FILE_LOCATION + "_3");
+		File f2 = new File(Registry.RENTALS_FILE_LOCATION + "_2");
+		File f1 = new File(Registry.RENTALS_FILE_LOCATION + "_1");
+		File rentalsFile = new File(Registry.RENTALS_FILE_LOCATION);
+		if(f5.exists()){ f5.delete();}
+		if(f4.exists()){ FileHelper.saveString(FileHelper.openFile(f4, true), f5, true);}
+		if(f3.exists()){ FileHelper.saveString(FileHelper.openFile(f3, true), f4, true);}
+		if(f2.exists()){ FileHelper.saveString(FileHelper.openFile(f2, true), f3, true);}
+		if(f1.exists()){ FileHelper.saveString(FileHelper.openFile(f1, true), f2, true);}
+		if(rentalsFile.exists()){ FileHelper.saveString(FileHelper.openFile(rentalsFile, true), f1, true);}
+		
+		//save the current file
+		saveRentals(rentals, rentalsFile);
+		
+		//save to the external backup
 		if(DO_BACKUP) saveRentals(rentals, new File(Registry.BACKUP_LOCATION));
 	}
 	

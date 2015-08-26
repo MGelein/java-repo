@@ -1,0 +1,44 @@
+package trb1914;
+
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import trb1914.data.Statistics;
+import trb1914.data.StatisticsCalculator;
+import trb1914.debug.Debug;
+/**
+ * The view that displays any statistics
+ * @author Mees Gelein
+ */
+public class StatisticsView extends JPanel{
+
+	/**The statistics that are displayed*/
+	private Statistics stats;
+	
+	/**
+	 * Refreshes (recalculates) the statistics on a separate thread and refreshes the display 
+	 * when the calculations are done
+	 */
+	public void refresh(){
+		new Thread(new Runnable(){
+			public void run() {
+				stats = StatisticsCalculator.getNewStatistics();
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						loadStats();
+						revalidate();
+						repaint();
+						Debug.println("Done loading statistics", this);
+					}
+				});
+			}
+		}).start();
+	}
+	
+	/**
+	 * Loads the statistics into the view components
+	 */
+	private void loadStats(){
+		
+	}
+}

@@ -18,6 +18,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -42,6 +43,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
@@ -50,6 +52,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
@@ -68,6 +72,7 @@ import trb1914.helper.SystemHelper;
 import trb1914.net.RentalServer;
 import trb1914.net.SocketHelper;
 import trb1914.preferences.Preferences;
+import trb1914.threading.ThreadManager;
 import trb1914.util.LoaderPane;
 import trb1914.util.RentalRenderer;
 import trb1914.util.SplashScreen;
@@ -76,7 +81,7 @@ import trb1914.util.SystemMessager;
  * the Main class of this application
  * @author Mees Gelein
  * 
- * TODO: multiple savefiles, calendarlike interface
+ * TODO: calendarlike interface
  */
 public class Main extends JFrame{
 
@@ -160,13 +165,33 @@ public class Main extends JFrame{
 	 * @param args		is useless right now
 	 */
 	public static void main(String[] args) {
-		System.setProperty("awt.useSystemAAFontSettings","on");
-		System.setProperty("swing.aatext", "true");
-
 		//loads the pref file
 		Preferences.load(Registry.PREF_FILE_LOCATION);
 		loadPrefs();
-		
+		//check if we even should be running at all (only allow one instance)
+		File tempFile = new File("lock.tmp");
+		if(tempFile.exists()) {
+			Debug.println("Instance of application already running.", Main.class); 
+			if(Preferences.getBoolean("PROG_singleInstance", true)){
+				Debug.println("Only one instace of the application is allowed. Ignoring startup request", Main.class);
+				System.exit(0);
+				return;
+			}else{
+				Debug.println("Multiple instance mode is turned on. The application can be launched multiple times", Main.class);
+			}
+		}else{
+			try {
+				tempFile.createNewFile();
+				tempFile.deleteOnExit();
+			} catch (IOException e1) {
+				Debug.println("Failed to create the locking File. The application may be launched with multiple instances");
+			}
+		}
+
+		//set some system graphics properties
+		System.setProperty("awt.useSystemAAFontSettings","on");
+		System.setProperty("swing.aatext", "true");
+
 		//get all images from the .jar
 		getImages();
 
@@ -187,7 +212,7 @@ public class Main extends JFrame{
 						Debug.println("Couldn't sleep to wait for all images to load");
 					}
 				}
-				
+
 				//startup main window
 				mainWindow = new Main();
 				mainWindow.setTitle(Registry.APP_TITLE);
@@ -230,7 +255,7 @@ public class Main extends JFrame{
 	 */
 	private void lookForServer(final boolean deepScan){
 		final LoaderPane loaderPane = new LoaderPane("De server wordt gezocht...");
-		new Thread(new Runnable(){
+		ThreadManager.submit(new Runnable(){
 			public void run(){
 				try{
 					loaderPane.setIndeterminate(true);
@@ -239,7 +264,7 @@ public class Main extends JFrame{
 					String address = "";
 					//check last know address first
 					boolean found = SocketHelper.checkPort(LAST_SERVER_ADDRESS, RentalServer.DETECT_PORT, RentalServer.CHECK_TIMEOUT);
-					
+
 					if(!found){
 						for(int i = 0; i < 254; i++){
 							address = subnet + i;
@@ -270,14 +295,14 @@ public class Main extends JFrame{
 					showNoServerMessage();
 				}				
 			}
-		}).start();
+		});
 	}
 
 	/**
 	 * This socket listens for any server broadcasts
 	 */
 	private void openListenPort(){
-		new Thread(new Runnable(){
+		ThreadManager.submit(new Runnable(){
 			public void run(){
 				try{
 					processInput(SocketHelper.receiveOn(RentalServer.BROAD_PORT));
@@ -288,7 +313,7 @@ public class Main extends JFrame{
 					openListenPort();//try opening the listen port again
 				}
 			}
-		}).start();
+		});
 	}
 
 	/**
@@ -478,7 +503,7 @@ public class Main extends JFrame{
 	 * @param s
 	 */
 	public void broadCast(final String s){
-		new Thread(new Runnable(){
+		ThreadManager.submit(new Runnable(){
 			public void run(){
 				try{
 					Debug.println("Broadcast message: " + s, this);
@@ -491,7 +516,7 @@ public class Main extends JFrame{
 					showNoServerMessage();
 				}
 			}
-		}).start();
+		});
 	}
 
 	/**
@@ -533,9 +558,12 @@ public class Main extends JFrame{
 		plusButton = new JButton(Registry.PLUS_48);
 		plusButton.setPreferredSize(new Dimension(OnScreenKeyboard.KEY_SIZE.width * 2, OnScreenKeyboard.KEY_SIZE.height * 4));//2 by 4 size
 		centerPanel.add(windowPanel, BorderLayout.SOUTH);
-		OnScreenKeyboard kb = new OnScreenKeyboard();
-		kb.addButton(plusButton);
-		windowPanel.add(kb);
+
+		if(Registry.SHOW_OSK){//if we want to show the OnScreenKeyboard
+			OnScreenKeyboard kb = new OnScreenKeyboard();
+			kb.addButton(plusButton);
+			windowPanel.add(kb);
+		}
 
 		//The plus button
 		components.add(plusButton);
@@ -600,7 +628,7 @@ public class Main extends JFrame{
 		});
 
 		JPanel centerPanelHolder = new JPanel(new BorderLayout());
-		add(centerPanelHolder, BorderLayout.CENTER);
+		//add(centerPanelHolder, BorderLayout.CENTER);
 		centerPanelHolder.add(centerPanel, BorderLayout.CENTER);
 		JPanel headerPanel = new JPanel(new GridLayout(1, 2));
 		centerPanelHolder.add(headerPanel, BorderLayout.NORTH);
@@ -612,59 +640,48 @@ public class Main extends JFrame{
 		dateHeaderPanel.setBorder(BorderFactory.createEmptyBorder(2, 30, 0, 0));
 		headerPanel.add(new JLabel("Fietsen"));
 		headerPanel.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
+		
+		//create the statistics view
+		final StatisticsView statView = new StatisticsView();
+
+		//The tabbedPane
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+		tabbedPane.setFont(Registry.LIST_FONT);
+		add(tabbedPane, BorderLayout.CENTER);
+		//encapsulate the tab titles in a HTML table to give it some natural padding
+		tabbedPane.addTab("<html><body><table>Lijst</table></body></html>", Registry.CLIPBOARD_16, centerPanelHolder);
+		tabbedPane.addTab("<html><body><table>Data</table></body></html>", Registry.STATISTICS_16, statView);
+		
+		tabbedPane.addChangeListener(new ChangeListener() {//listens for change of tab
+			public void stateChanged(ChangeEvent e) {
+				statView.refresh();
+			}
+		});
+
+		//if we don't have an OSK we need to add the plusbutton somewhere else
+		if(!Registry.SHOW_OSK){
+			JPanel plusButtonPanel = new JPanel();
+			add(plusButtonPanel, BorderLayout.WEST);
+			plusButtonPanel.add(plusButton);
+		}
 
 		//makes the menu bar (top of the window)
 		makeMenuBar();
 
-		//the searchfield
-		JPanel northPanel = new JPanel(new BorderLayout());
-		northPanel.setPreferredSize(new Dimension(0, 35));
-		searchField = new JTextField();
-		components.add(searchField);
-		searchField.setHorizontalAlignment(SwingConstants.CENTER);
-		((AbstractDocument) searchField.getDocument()).setDocumentFilter(new UpperCaseFilter());
-		//update the list whenever something changes in the search query field
-		searchField.getDocument().addDocumentListener(new DocumentListener(){
-			public void changedUpdate(DocumentEvent e) {updateList();}
-			public void insertUpdate(DocumentEvent e) {updateList();}
-			public void removeUpdate(DocumentEvent e) {updateList();}
-		});
-		//clear field when regaining focus i.e: after a search query
-		searchField.addFocusListener(new FocusAdapter() {
-			public void focusGained(FocusEvent e) {
-				searchField.setText("");
-				super.focusGained(e);
-			}
-		});
-		//the attaching of the keys to the action.
-		searchField.getActionMap().put("SearchFocus", new AbstractAction("SearchFocus"){
-			public void actionPerformed(ActionEvent e){
-				searchField.setText("");
-				searchField.requestFocusInWindow();
-			}
-		});
-		//clear the field when double clicked
-		searchField.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount() > 1 || e.getButton() == 3){//more than a single click or rmb click (long click on touch devices)
-					searchField.setText("");
-				}
-			}
-		});
-		searchField.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(Registry.F2_KeyStroke, "SearchFocus");
+		//makes the searchField and its actions
+		makeSearchField();
 
-		//adds the searchfield
-		northPanel.add(searchField);
-		JLabel searchLabel = new JLabel(Registry.SEARCH_16);
-		searchLabel.setText("(" + Registry.F2_KeyName + ")");
-		searchLabel.setBorder(BorderFactory.createEmptyBorder(2,2,2,6));
-		northPanel.add(searchLabel, BorderLayout.WEST);
-		components.add(searchLabel);
+		//creates the info panel and the order buttons
+		makeInfoPanel();
 
-		northPanel.setBorder(BorderFactory.createEmptyBorder(2, 8, 2, 8));
-		searchField.setFont(searchField.getFont().deriveFont(Registry.SEARCH_FONT_SIZE));
-		add(northPanel, BorderLayout.NORTH);
+		//disables any GUI controls untill a connection to the server is created
+		enableGUI(false);
+	}
 
+	/**
+	 * Builds the rightPanel that holds all the info and order buttons
+	 */
+	private void makeInfoPanel() {
 		//east panel, the panel that holds the order settings and the info panel.
 		JPanel eastPanel = new JPanel(new BorderLayout());
 		add(eastPanel, BorderLayout.EAST);
@@ -879,6 +896,7 @@ public class Main extends JFrame{
 		duePanel.add(dueButton);
 		filterPanel.add(duePanel);
 
+		//miscpanel
 		JPanel miscPanel = new JPanel(new BorderLayout());
 		final JToggleButton miscButton = new JToggleButton("Overigen");
 		miscButton.setSelected(Main.SHOW_LATE);
@@ -938,7 +956,61 @@ public class Main extends JFrame{
 			}
 		});
 		infoUpdateTimer.start();
-		enableGUI(false);
+	}
+
+	/**
+	 * Builds the searchfield and its actions
+	 */
+	private void makeSearchField() {
+		//the searchfield
+		JPanel northPanel = new JPanel(new BorderLayout());
+		northPanel.setPreferredSize(new Dimension(0, 35));
+		searchField = new JTextField();
+		components.add(searchField);
+		searchField.setHorizontalAlignment(SwingConstants.CENTER);
+		((AbstractDocument) searchField.getDocument()).setDocumentFilter(new UpperCaseFilter());
+		//update the list whenever something changes in the search query field
+		searchField.getDocument().addDocumentListener(new DocumentListener(){
+			public void changedUpdate(DocumentEvent e) {updateList();}
+			public void insertUpdate(DocumentEvent e) {updateList();}
+			public void removeUpdate(DocumentEvent e) {updateList();}
+		});
+		//clear field when regaining focus i.e: after a search query
+		searchField.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				searchField.setText("");
+				super.focusGained(e);
+			}
+		});
+		//the attaching of the keys to the action.
+		searchField.getActionMap().put("SearchFocus", new AbstractAction("SearchFocus"){
+			public void actionPerformed(ActionEvent e){
+				searchField.setText("");
+				searchField.requestFocusInWindow();
+			}
+		});
+		//clear the field when double clicked
+		searchField.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				/*if(e.getClickCount() > 1 || e.getButton() == 3){//more than a single click or rmb click (long click on touch devices)
+					searchField.setText("");
+				}*/
+				searchField.setText("");
+			}
+		});
+		searchField.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(Registry.F2_KeyStroke, "SearchFocus");
+
+		//adds the searchfield
+		northPanel.add(searchField);
+		JLabel searchLabel = new JLabel(Registry.SEARCH_16);
+		searchLabel.setText("(" + Registry.F2_KeyName + ")");
+		searchLabel.setBorder(BorderFactory.createEmptyBorder(2,2,2,6));
+		northPanel.add(searchLabel, BorderLayout.WEST);
+		components.add(searchLabel);
+
+		northPanel.setBorder(BorderFactory.createEmptyBorder(2, 8, 2, 8));
+		searchField.setFont(searchField.getFont().deriveFont(Registry.SEARCH_FONT_SIZE));
+		add(northPanel, BorderLayout.NORTH);
 	}
 
 	/**
@@ -947,9 +1019,11 @@ public class Main extends JFrame{
 	 */
 	private void openRentViewer(Rental r){
 		windowPanel.removeAll();
-		OnScreenKeyboard kb = new OnScreenKeyboard();
-		kb.add(plusButton);
-		windowPanel.add(kb);
+		if(Registry.SHOW_OSK){//if we want to show the OnScreenKeyboard
+			OnScreenKeyboard kb = new OnScreenKeyboard();
+			kb.add(plusButton);
+			windowPanel.add(kb);
+		}
 		windowPanel.add(new RentViewer(r), BorderLayout.NORTH);
 		revalidate();
 		repaint();
@@ -960,9 +1034,11 @@ public class Main extends JFrame{
 	 */
 	private void openRentWindow(){
 		windowPanel.removeAll();
-		OnScreenKeyboard kb = new OnScreenKeyboard();
-		kb.addButton(plusButton);
-		windowPanel.add(kb);
+		if(Registry.SHOW_OSK){//if we want to show the OnScreenKeyboard
+			OnScreenKeyboard kb = new OnScreenKeyboard();
+			kb.add(plusButton);
+			windowPanel.add(kb);
+		}
 		windowPanel.add(new RentWindow(), BorderLayout.NORTH);
 		revalidate();
 		repaint();
@@ -974,9 +1050,11 @@ public class Main extends JFrame{
 	public void resetWindowPanel(){
 		playCloseSound();
 		windowPanel.removeAll();
-		OnScreenKeyboard kb = new OnScreenKeyboard();
-		kb.addButton(plusButton);
-		windowPanel.add(kb);
+		if(Registry.SHOW_OSK){//if we want to show the OnScreenKeyboard
+			OnScreenKeyboard kb = new OnScreenKeyboard();
+			kb.add(plusButton);
+			windowPanel.add(kb);
+		}
 		revalidate();
 		repaint();
 	}
@@ -1046,18 +1124,10 @@ public class Main extends JFrame{
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu(Registry.S_FILE_MENU);
 		JMenu extraMenu = new JMenu(Registry.S_EXTRA_MENU);
-		JMenuItem usageItem = new JMenuItem(Registry.S_USAGE_STATISTICS_MENU);
-		usageItem.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				new UsageViewer();
-			}
-		});
-		extraMenu.add(usageItem);
-		usageItem.setIcon(Registry.STATISTICS_16);
 
 		//locates the server and redownloads all the rentals
 		JMenuItem connectionItem = new JMenuItem(Registry.SERVER_16);
-		connectionItem.setText("Server");
+		connectionItem.setText(Registry.S_SERVER_CONNECTION);
 		connectionItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				Main.playPingSound();
@@ -1080,7 +1150,7 @@ public class Main extends JFrame{
 		fileMenu.add(newItem);
 		fileMenu.addSeparator();
 		newItem.setIcon(Registry.PLUS_16);
-		
+
 		JMenuItem makeBackupItem = new JMenuItem(Registry.S_CREATE_BACKUP_MENU);
 		makeBackupItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -1153,7 +1223,7 @@ public class Main extends JFrame{
 			}
 		}
 	}
-
+	
 	/**
 	 * does the necessary shutdown stuff
 	 */
@@ -1175,7 +1245,7 @@ public class Main extends JFrame{
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 		//close server and JVM
 		if(Main.isServer) RentalServer.activeInstance.shutDown();
 		System.exit(0);
@@ -1213,8 +1283,9 @@ public class Main extends JFrame{
 	 * registers all the images to the Registry on a separate thread
 	 */
 	private static void getImages(){
-		new Thread(new Runnable() {
+		ThreadManager.submit(new Runnable() {
 			public void run() {
+				Registry.CLIPBOARD_16 = ImageHelper.getImageIcon("/trb1914/img/clipboard_16.png");
 				Registry.PLUS_WEEK = ImageHelper.getImageIcon("/trb1914/img/plusWeek.png");
 				Registry.MINUS_WEEK = ImageHelper.getImageIcon("/trb1914/img/minusWeek.png");
 				Registry.PLUS_DAY = ImageHelper.getImageIcon("/trb1914/img/plusDay.png");
@@ -1252,7 +1323,7 @@ public class Main extends JFrame{
 				Registry.SERVER_16 = ImageHelper.getImageIcon("/trb1914/img/server_go.png");
 				Registry.IMAGES_LOADED.set(true);
 			}
-		}).start();
+		});
 	}
 
 	/**
@@ -1301,7 +1372,7 @@ public class Main extends JFrame{
 	 * @param recallDelay	the delay to sort again in milliseconds.
 	 */
 	private void sortList(){
-		new Thread(new Runnable(){
+		ThreadManager.submit(new Runnable(){
 			public void run() {
 				if(Main.SORT_BY_CODE){
 					sortByCode(Main.REVERSED);
@@ -1310,17 +1381,17 @@ public class Main extends JFrame{
 				}else if(Main.SORT_BY_START_DATE){
 					sortByStartDate(Main.REVERSED);
 				}
-				
+
 				synchronized(allRentals){
 					filteredRentals = new ArrayList<Rental>();
 					for(Rental r : allRentals){
 						if(allowToAddToList(r)) filteredRentals.add(r);
 					}
 				}
-				
+
 				updateList();
 			}
-		}).start();
+		});
 	}
 
 	/**
@@ -1382,7 +1453,12 @@ public class Main extends JFrame{
 		}
 	}
 
-
+	/**
+	 * Returns the Java Color that is saved in the Preferences
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
 	private static Color getColorFromPreferences(String key, Color defaultValue){
 		try{
 			return Color.decode(Preferences.get(key));
@@ -1433,7 +1509,6 @@ public class Main extends JFrame{
 		Preferences.set("FNT_searchFontSize", Registry.SEARCH_FONT_SIZE);
 		Preferences.set("FNT_listFontSize", Registry.LIST_FONT_SIZE);
 		Preferences.set("FNT_keyboardFontSize", OnScreenKeyboard.FONT_SIZE);
-		Preferences.set("FILE_saveDelay", Registry.SAVE_DELAY);
 		Preferences.set("NET_ipTimeout", RentalServer.CHECK_TIMEOUT);
 		Preferences.set("NET_messageTimeout", SocketHelper.MESSAGE_TIMEOUT);
 		Preferences.set("NET_serverAddress", Main.LAST_SERVER_ADDRESS);
@@ -1449,6 +1524,7 @@ public class Main extends JFrame{
 		Preferences.set("FILE_backupEnabled", XMLParser.DO_BACKUP);
 		Preferences.set("UI_maxListItems", RentalRenderer.MAX_ITEMS);
 		Preferences.set("UI_keyboardKeysize", OnScreenKeyboard.KEY_SIZE);
+		Preferences.set("UI_showOnScreenKeyboard", Registry.SHOW_OSK);
 		Preferences.set("UI_colorKeyboard", Integer.toHexString(OnScreenKeyboard.bgColor.getRGB()).toUpperCase().replaceFirst("FF", "#"));
 		Preferences.set("UI_colorPaid", Integer.toHexString(RentalRenderer.PAID_COLOR.getRGB()).toUpperCase().replaceFirst("FF", "#"));
 		Preferences.set("UI_colorPaidBG", Integer.toHexString(RentalRenderer.PAID_COLOR_BG.getRGB()).toUpperCase().replaceFirst("FF", "#"));
@@ -1462,6 +1538,8 @@ public class Main extends JFrame{
 		Preferences.set("UI_colorNoMatch", Integer.toHexString(RentalRenderer.NO_MATCH_COLOR.getRGB()).toUpperCase().replaceFirst("FF", "#"));
 		Preferences.set("UI_colorBorder", Integer.toHexString(RentalRenderer.BORDER_COLOR.getRGB()).toUpperCase().replaceFirst("FF", "#"));
 		Preferences.set("UI_colorBorderSel", Integer.toHexString(RentalRenderer.BORDER_COLOR_SEL.getRGB()).toUpperCase().replaceFirst("FF", "#"));
+		Preferences.set("APP_title", Registry.APP_TITLE.replaceAll(" " + Registry.APP_VERSION, ""));
+		Preferences.set("APP_version", Registry.APP_VERSION);
 	}
 
 	/**
@@ -1497,7 +1575,6 @@ public class Main extends JFrame{
 		Registry.SEARCH_FONT_SIZE = Preferences.getFloat("FNT_searchFontSize", Registry.SEARCH_FONT_SIZE);
 		Registry.LIST_FONT_SIZE = Preferences.getInteger("FNT_listFontSize", Registry.LIST_FONT_SIZE);
 		OnScreenKeyboard.FONT_SIZE = Preferences.getFloat("FNT_keyboardFontSize", OnScreenKeyboard.FONT_SIZE);
-		Registry.SAVE_DELAY = Preferences.getInteger("FILE_saveDelay", Registry.SAVE_DELAY);
 		Registry.BACKUP_LOCATION = Preferences.get("FILE_backupLocation", Registry.BACKUP_LOCATION);
 		SocketHelper.MESSAGE_TIMEOUT = Preferences.getInteger("NET_messageTimeout", SocketHelper.MESSAGE_TIMEOUT);
 		Main.LAST_SERVER_ADDRESS = Preferences.get("NET_serverAddress", Main.LAST_SERVER_ADDRESS);
@@ -1518,6 +1595,9 @@ public class Main extends JFrame{
 		Registry.F6_KeyName = getNameFromKeyStroke(Registry.F6_KeyStroke);
 		Registry.F7_KeyName = getNameFromKeyStroke(Registry.F7_KeyStroke);
 		Registry.ESC_KeyName = getNameFromKeyStroke(Registry.ESC_KeyStroke);
+		Registry.SHOW_OSK = Preferences.getBoolean("UI_showOnScreenKeyboard", Registry.SHOW_OSK);
+		Registry.APP_VERSION = Preferences.get("APP_version", Registry.APP_VERSION);
+		Registry.APP_TITLE = Preferences.get("APP_title", Registry.APP_TITLE) + " " + Registry.APP_VERSION;
 		XMLParser.DO_BACKUP = Preferences.getBoolean("FILE_backupEnabled", XMLParser.DO_BACKUP);
 		OnScreenKeyboard.bgColor = getColorFromPreferences("UI_colorKeyboard", OnScreenKeyboard.bgColor);
 		RentalRenderer.PAID_COLOR = getColorFromPreferences("UI_colorPaid", RentalRenderer.PAID_COLOR);

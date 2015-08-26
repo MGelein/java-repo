@@ -1,0 +1,574 @@
+package trb1914.data;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import trb1914.debug.Debug;
+/**
+ * a class that contains a single customer
+ * @author Mees Gelein
+ */
+public class Rental {
+
+	public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+	private String startDate = "";
+	private String endDate = "";
+	private String code = "";
+	private Date _endDate = normalizeDate(new Date());
+	private Date _startDate = _endDate;
+	public boolean hasWarning = false;
+	public String priority = "low";//warning priority
+	public ArrayList<RentalItem> objects = new ArrayList<RentalItem>();
+	public ArrayList<RentalItem> paidObjects = new ArrayList<RentalItem>();
+	public ArrayList<RentalItem> swappedObjects = new ArrayList<RentalItem>();
+	public int codeInt = 0;
+	public String comments = "";
+
+	/**
+	 * if all objects are collected
+	 * @return
+	 */
+	public boolean isAllPaid(){
+		return (objects.size() == 0);
+	}
+
+	/**
+	 * Pays all the rented objects in this rental
+	 */
+	public void payAll(){
+		for(RentalItem r : objects) paidObjects.add(r);
+		objects.clear();
+	}
+
+	/**
+	 * Returns the amount of days this rental has taken
+	 */
+	public int getRentLength(){
+		return (int) TimeUnit.DAYS.convert(_endDate.getTime() - _startDate.getTime(), TimeUnit.MILLISECONDS) + 1;
+	}
+	
+	/**
+	 * Returns true if this Rental has the exact provided String as a name for a rented item
+	 * @param s
+	 * @return
+	 */
+	public boolean hasPaidObject(String s){
+		for(RentalItem r : paidObjects) if(r.name.equals(s)) return true;
+		return false;
+	}
+	
+	/**
+	 * Returns true if this Rental has the exact provided String as a name for a rented item
+	 * @param s
+	 * @return
+	 */
+	public boolean hasSwappedObject(String s){
+		for(RentalItem r : swappedObjects) if(r.name.equals(s)) return true;
+		return false;
+	}
+	
+	/**
+	 * Returns true if this Rental has the exact provided String as a name for a rented item
+	 * @param s
+	 * @return
+	 */
+	public boolean hasObject(String s){
+		for(RentalItem r : objects) if(r.name.equals(s)) return true;
+		return false;
+	}
+	
+	/**
+	 * Returns the length the provided item has been rented
+	 * @param s
+	 * @return
+	 */
+	public int getRentLength(String s){
+		for(RentalItem r : paidObjects) if(r.name.equals(s)) return r.getRentLength();
+		for(RentalItem r : swappedObjects) if(r.name.equals(s)) return r.getRentLength();
+		for(RentalItem r : objects) if(r.name.equals(s)) return r.getRentLength();
+		return 0;
+	}
+
+	/**
+	 * returns a String representation of this object
+	 */
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		builder.append(startDate);
+		builder.append("  <>  ");
+		builder.append(endDate);
+		builder.append(":[");
+		builder.append(code);
+		builder.append("]: ");
+		for(int i = 0; i < objects.size(); i++){
+			builder.append(objects.get(i));
+			builder.append(", ");
+		}
+		builder.append(" (");
+		for(int i = 0; i < paidObjects.size(); i++){
+			builder.append(paidObjects.get(i));
+			builder.append(", ");
+		}
+		builder.append(")");
+		return builder.toString();
+	}
+
+	/**
+	 * Returns if the endDate is already past today
+	 */
+	public boolean isLate(){
+		return normalizeDate(new Date()).after(_endDate);
+	}
+
+	/**
+	 * If the endDate is today
+	 * @return
+	 */
+	public boolean isDueToday(){
+		return (!isLate() && !normalizeDate(new Date()).before(_endDate));
+	}
+
+	/**
+	 * Returns a exact copy of this instance to use for editing
+	 * @return
+	 */
+	public Rental copy(){
+		Rental r = new Rental();
+		r.loadFromDef(getAsString());
+		return r;
+	}
+
+	/**
+	 * sets the startDate
+	 * @param s
+	 */
+	public void setStartDate(String s){
+		if(s == null) return;
+		if(s.length() == 0) return;
+
+		startDate = s;
+		try{
+			_startDate = dateFormat.parse(s);
+		}catch(Exception e){
+			Debug.println("Coulnd't parse the provided String startDate(" + s + ") + code =" + getCode(), this);
+		}
+	}
+
+	/**
+	 * Parses the String and normalizes it to the dd-mm-yyyy format so it can be compared to 
+	 * the other strings
+	 * @param d
+	 * @return
+	 */
+	private Date normalizeDate(Date d){
+		try{
+			String dateString = dateFormat.format(d);
+			return dateFormat.parse(dateString);
+		}catch(Exception e){
+			e.printStackTrace();
+			return new Date();
+		}
+	}
+
+	/**
+	 * returns the startDate Date instance
+	 * @return
+	 */
+	public Date getStartDateValue(){
+		if(_startDate != null){
+			return _startDate;
+		}else{
+			Debug.println("Rental [" + code + "] has no startDate or the startDate could not be parsed. The current date has been returned instead.", this);
+			return new Date();
+		}
+	}
+
+	/**
+	 * returns the endDate Date instance
+	 * @return
+	 */
+	public Date getEndDateValue(){
+		if(_endDate != null){
+			return _endDate;
+		}else{
+			Debug.println("Rental [" + code + "] has no endDate or the endDate could not be parsed. The current date has been returned instead.", this);
+			return new Date();
+		}
+	}
+
+	/**
+	 * returns the startDate
+	 * @return
+	 */
+	public String getStartDate(){
+		return startDate;
+	}
+
+	/**
+	 * sets the endDate
+	 * @param s
+	 */
+	public void setEndDate(String s){
+		if(s == null) return;
+		if(s.length() == 0) return;
+
+		endDate = s;
+		try{
+			_endDate = dateFormat.parse(s);
+		}catch(Exception e){
+			Debug.println("Coulnd't parse the provided String endDate(" + s + ") + code =" + getCode(), this);
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * returns the endDate
+	 * @return
+	 */
+	public String getEndDate(){
+		return endDate;
+	}
+
+	/**
+	 * sets the customer code
+	 * @param s
+	 */
+	public void setCode(String s){
+		if(s == null) return;
+		if(s.length() == 0) return;
+		code = s;
+		try{
+			codeInt = Integer.parseInt(s);
+		}catch(Exception e){
+			Debug.println("This code could not be parsed to integer. It is assumed it means 0 (" + s + ")", this);
+			codeInt = 0;
+		}
+	}
+
+	/**
+	 * returns the customer code
+	 * @return
+	 */
+	public String getCode(){
+		return code;
+	}
+
+	/**
+	 * adds a NEW rented object to the rental
+	 * @param s
+	 */
+	public void addObject(String s){
+		if(s == null) return;
+		if(s.length() == 0) return;
+
+		s = s.replaceAll(" ", "");
+		String[] parts = s.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+		if(parts.length > 1){
+			int number = Integer.parseInt(parts[1]);
+			if(number < 10){
+				parts[1] = parts[1].replaceAll("0", "");
+				parts[1] = "0" + parts[1];
+			}
+			s = parts[0] + parts[1];
+		}
+		if(s.length() > 0){
+			RentalItem newItem = new RentalItem();
+			newItem.name = s;
+			newItem.startDate = normalizeDate(_startDate);
+			newItem.endDate = normalizeDate(_endDate);
+			objects.add(newItem);
+		}
+	}
+	/**
+	 * removes a rented object from the rental
+	 * @param s
+	 */
+	public void removeObject(String s){
+		RentalItem toRemove = null;
+		for(RentalItem i : objects) if(i.name.equals(s)) toRemove = i;
+		if(toRemove != null){//check if we have found a match
+			objects.remove(toRemove);
+		}
+	}
+
+	/**
+	 * removes the object from the list of objects to be paid and adds it to the paid list
+	 * @param s
+	 */
+	public void payObject(String s){
+		RentalItem toPay = null;
+		for(RentalItem i : objects) if(i.name.equals(s)) toPay = i;
+		if(toPay != null){//check if we have found a match
+			if(objects.remove(toPay)){//remove the match from the rented objects list
+				toPay.endDate = normalizeDate(new Date());
+				paidObjects.add(toPay);
+			}
+		}
+	}
+
+	/**
+	 * removes the object from the list of objects to be swapped and adds it to the swapped list
+	 * @param s
+	 */
+	public void swapObject(String s){
+		RentalItem toSwap = null;
+		for(RentalItem i : objects) if(i.name.equals(s)) toSwap = i;
+		if(toSwap != null){//check if we have found a match
+			if(objects.remove(toSwap)){
+				toSwap.endDate = normalizeDate(new Date());
+				swappedObjects.add(toSwap);
+			}
+		}
+	}
+
+	/**
+	 * does the opposite of the swapObject(String s) method
+	 * @param s
+	 */
+	public void unswapObject(String s){
+		RentalItem toSwap = null;
+		for(RentalItem i : objects) if(i.name.equals(s)) toSwap = i;
+		if(toSwap != null){//check if we have found a match
+			if(swappedObjects.remove(toSwap)){
+				objects.add(toSwap);
+			}
+		}
+	}
+
+	/**
+	 * does the opposite of the payObject(String s) method
+	 * @param s
+	 */
+	public void unpayObject(String s){
+		RentalItem toPay = null;
+		for(RentalItem i : objects) if(i.name.equals(s)) toPay = i;
+		if(toPay != null){//check if we have found a match
+			if(paidObjects.remove(toPay)){
+				objects.add(toPay);
+			}
+		}
+	}
+
+	/**
+	 * checks to see if this rental equals the provided code
+	 * with either code, startDate or endDate
+	 * @param s
+	 * @return
+	 */
+	public boolean hasCode(String s){
+		if(code.contains(s)){
+			return true;
+		}else if(startDate.contains(s)){
+			return true;
+		}else if(endDate.contains(s)){
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * returns true if the provided String is matched in any way
+	 * in the objects of this rental
+	 * @param s
+	 * @return
+	 */
+	public boolean hasObject(String s, boolean includePaid){
+		//check rented objects
+		for(RentalItem o : objects) if(o.name.contains(s)) return true;
+
+		//check paid objects
+		if(includePaid){
+			for(RentalItem p : paidObjects)	if(p.name.contains(s)) return true;
+		}
+
+		//check swapped objects
+		for(RentalItem sw : swappedObjects) if(sw.name.contains(s)) return true;
+
+		return false;
+	}
+
+	/**
+	 * returns true only if this is in the OBJECTS list and precisely using String.equals
+	 * @param s
+	 * @return
+	 */
+	public boolean hasExactObject(String s){
+		for(RentalItem o : objects) if(o.name.equals(s)) return true;
+		return false;
+	}
+
+	/**
+	 * the amount of objects not paid yet
+	 * @return
+	 */
+	public int getObjectCount(){
+		int count = 0; int i, max;
+		max = objects.size();
+		for(i=0; i<max; i++){
+			if(objects.get(i).isBike()){
+				count++;
+			}
+		}
+		return count;
+	}
+
+
+	/*
+	 * PARSE NETWORK DEFINITIONS
+	 */
+	public static final String CODE_DEF = "c=";
+	public static final String START_DATE_DEF = "s=";
+	public static final String END_DATE_DEF = "e=";
+	public static final String OBJECT_DEF = "o=";
+	public static final String PAID_OBJECT_DEF = "p=";
+	public static final String SWAPPED_OBJECT_DEF = "x=";
+	public static final String WARNING_DEF = "w=";
+	public static final String PRIORITY_DEF = "r=";
+	public static final String COMMENT_DEF = "k=";
+	public static final String DELIM_DEF = ",";
+	public static final String OBJECT_DELIM_DEF = ";";
+
+	/**
+	 * Loads this Rental with the data provided from the network string
+	 * @param s
+	 * @return
+	 */
+	public boolean loadFromDef(String s){
+		s = s.replaceAll(";;", ";");
+		s = s.replaceAll("=,", ",");
+		String[] parts = s.split(DELIM_DEF);
+		for(String part : parts) parsePart(part);
+		for(RentalItem r: objects){
+			if(r.startDate == null) r.startDate = _startDate;
+		}
+		for(RentalItem r: paidObjects){
+			if(r.startDate == null) r.startDate = _startDate;
+			if(r.endDate == null) r.endDate = _endDate;
+		}
+		for(RentalItem r: swappedObjects){
+			if(r.startDate == null) r.startDate = _startDate;
+			if(r.endDate == null) r.endDate = _endDate;
+		}
+		return true;
+	}
+
+	/**
+	 * Returns if this thingy has a code
+	 * @return
+	 */
+	public boolean isValid(){
+		return getCode().length() > 0;
+	}
+
+	/**
+	 * Parses a part of the definition after determining
+	 * what part it is
+	 * @param s
+	 */
+	private void parsePart(String s){
+		String[] parts = s.split("=");
+		if(parts.length > 1){
+			switch(parts[0] + "="){
+			case CODE_DEF:
+				setCode(parts[1]);
+				break;
+			case START_DATE_DEF:
+				setStartDate(parts[1]);
+				break;
+			case END_DATE_DEF:
+				setEndDate(parts[1]);
+				break;
+			case OBJECT_DEF:
+				objects.add(parseRentalItem(parts[1]));
+				break;
+			case PAID_OBJECT_DEF:
+				paidObjects.add(parseRentalItem(parts[1]));
+				break;
+			case SWAPPED_OBJECT_DEF:
+				swappedObjects.add(parseRentalItem(parts[1]));
+				break;
+			case WARNING_DEF:
+				try{
+					hasWarning = (Integer.parseInt(parts[1]) > 0);
+				}catch(Exception e){
+					hasWarning = false;
+				}
+				break;
+			case PRIORITY_DEF:
+				priority = parts[1];
+				break;
+			case COMMENT_DEF:
+				if(parts.length > 1) comments = parts[1];
+			}
+		}
+	}
+	
+	/**
+	 * This parses the network definitions
+	 * @param s
+	 * @return
+	 */
+	public RentalItem parseRentalItem(String s){
+		RentalItem r = new RentalItem();
+		r.parseFromString(s);
+		return r;
+	}
+
+	/**
+	 * Returns the String representation of this Rental object used
+	 * for network traffic
+	 * @return
+	 */
+	public String getAsString(){
+		StringBuilder builder = new StringBuilder();
+		//code
+		builder.append(CODE_DEF);
+		builder.append(getCode());
+		builder.append(DELIM_DEF);
+		//startdate
+		builder.append(START_DATE_DEF);
+		builder.append(getStartDate());
+		builder.append(DELIM_DEF);
+		//enddate
+		builder.append(END_DATE_DEF);
+		builder.append(getEndDate());
+		builder.append(DELIM_DEF);
+		//comments
+		builder.append(COMMENT_DEF);
+		builder.append(comments);
+		builder.append(DELIM_DEF);
+		//paidObjects
+		for(RentalItem r : paidObjects){
+			builder.append(PAID_OBJECT_DEF);
+			builder.append(r.getAsString());
+			builder.append(DELIM_DEF);
+		}
+		//swappedObjects
+		for(RentalItem r: swappedObjects){
+			builder.append(SWAPPED_OBJECT_DEF);
+			builder.append(r.getAsString());
+			builder.append(DELIM_DEF);
+		}
+		//objects
+		for(RentalItem r: objects){
+			builder.append(OBJECT_DEF);
+			builder.append(r.getAsString());
+			builder.append(DELIM_DEF);
+		}
+		//hasWarning
+		builder.append(WARNING_DEF);
+		builder.append(hasWarning ? "1":"0");
+		builder.append(DELIM_DEF);
+		//priority
+		builder.append(PRIORITY_DEF);
+		builder.append(priority);
+		builder.append(DELIM_DEF);
+
+		//object delimiter. Put the Object Delim Def at the end of
+		//every rental obj
+		builder.append(OBJECT_DELIM_DEF);
+		return builder.toString();
+	}
+}

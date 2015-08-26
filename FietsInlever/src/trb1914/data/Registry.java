@@ -17,15 +17,15 @@ import trb1914.util.SystemMessager;
  */
 public class Registry {
 
-	public static final String APP_VERSION = "v1.7.4";
-	public static final String APP_TITLE = "Harry's Tweewielers Inleverpunt " + APP_VERSION;
+	public static String APP_VERSION = "v1.7.4";
+	public static String APP_TITLE = "Inleverpunt";
 	public static Dimension APP_SIZE = new Dimension();
 	public static float MASTER_GAIN = 0.0f;
 	public static boolean APP_MAXIMIZED = true;
+	public static boolean SHOW_OSK = true;//if we are showing the OnScreenKeyboard
 	public static float SEARCH_FONT_SIZE = 25; //not final because font sizes are set using the Preferences
 	public static int LIST_FONT_SIZE = 16;
 	public static float RENT_WINDOW_FONT_SIZE = 18;
-	public static int SAVE_DELAY = 30000;
 	public static final String KLANT_CODE = "Registratienummer";
 	public static final String START_DATE = "Verhuurdatum";
 	public static final String END_DATE = "Inleverdatum";
@@ -36,6 +36,7 @@ public class Registry {
 	public static Font LIST_FONT;
 	public static Font BOLD_LIST_FONT;
 	
+	public static ImageIcon CLIPBOARD_16;
 	public static ImageIcon PLUS_WEEK;
 	public static ImageIcon PLUS_DAY;
 	public static ImageIcon MINUS_WEEK;
@@ -101,6 +102,7 @@ public class Registry {
 	public static String S_QUIT_MENU = "Afsluiten";
 	public static String S_CREATE_BACKUP_MENU = "Archiveren...";
 	public static String S_RESTORE_BACKUP_MENU = "Archief openen...";
+	public static String S_SERVER_CONNECTION = "Server";
 	
 	/**Thread safe flag to determine if all images have been loaded*/
 	public static AtomicBoolean IMAGES_LOADED = new AtomicBoolean(false);

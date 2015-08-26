@@ -276,7 +276,8 @@ public class Rental {
 		if(s.length() > 0){
 			RentalItem newItem = new RentalItem();
 			newItem.name = s;
-			newItem.startDate = normalizeDate(new Date());
+			newItem.startDate = normalizeDate(_startDate);
+			newItem.endDate = normalizeDate(_endDate);
 			objects.add(newItem);
 		}
 	}
@@ -403,19 +404,14 @@ public class Rental {
 	 * @return
 	 */
 	public int getObjectCount(){
-		//for some reason i'm not counting the objects that have no numbers in them? Replaced for the
-		//faster alternative for now. Should work. Kept the old method in here for safety and backup reasons.
-
-		/*int count = 0; int i, max;
+		int count = 0; int i, max;
 		max = objects.size();
 		for(i=0; i<max; i++){
-			if(objects.get(i).split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)").length > 1){
+			if(objects.get(i).isBike()){
 				count++;
 			}
 		}
-		return count;*/
-
-		return objects.size();
+		return count;
 	}
 
 
@@ -446,6 +442,7 @@ public class Rental {
 		for(String part : parts) parsePart(part);
 		for(RentalItem r: objects){
 			if(r.startDate == null) r.startDate = _startDate;
+			if(r.endDate == null) r.endDate = _endDate;
 		}
 		for(RentalItem r: paidObjects){
 			if(r.startDate == null) r.startDate = _startDate;
@@ -516,6 +513,8 @@ public class Rental {
 	 */
 	public RentalItem parseRentalItem(String s){
 		RentalItem r = new RentalItem();
+		r.startDate = _startDate;
+		r.endDate = _endDate;
 		r.parseFromString(s);
 		return r;
 	}

@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <XML>
 <rental>
-<startDate>06-07-2015</startDate>
-<endDate>06-07-2015</endDate>
-<code>22</code>
+<startDate>23-08-2015</startDate>
+<endDate>23-08-2015</endDate>
+<code>28</code>
 <hasWarning priority="low">false</hasWarning>
-<object rentDate="06-07-2015" returnDate="--">B34</object>
-<object rentDate="06-07-2015" returnDate="--">A06</object>
-<object rentDate="06-07-2015" returnDate="--">A45</object>
-<object rentDate="06-07-2015" returnDate="--">A23</object>
+<object rentDate="--" returnDate="23-08-2015">A03</object>
+<object rentDate="23-08-2015" returnDate="23-08-2015">A02</object>
+<object rentDate="23-08-2015" returnDate="23-08-2015">A01</object>
 <comment/>
 </rental>
 <rental>
-<startDate>06-07-2015</startDate>
-<endDate>06-07-2015</endDate>
-<code>23</code>
+<startDate>21-08-2015</startDate>
+<endDate>23-08-2015</endDate>
+<code>29</code>
 <hasWarning priority="low">false</hasWarning>
-<object rentDate="06-07-2015" returnDate="--">EB44</object>
-<object rentDate="06-07-2015" returnDate="--">HM</object>
-<object rentDate="06-07-2015" returnDate="--">VZ</object>
-<object rentDate="06-07-2015" returnDate="--">AZ</object>
+<object rentDate="21-08-2015" returnDate="23-08-2015">A06</object>
+<object rentDate="21-08-2015" returnDate="23-08-2015">A05</object>
+<object rentDate="21-08-2015" returnDate="23-08-2015">A04</object>
 <comment/>
 </rental>
 </XML>

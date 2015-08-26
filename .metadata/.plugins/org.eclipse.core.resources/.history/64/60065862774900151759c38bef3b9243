@@ -1,0 +1,26 @@
+package trb1914.data;
+
+import java.util.HashMap;
+
+/**
+ * The class that contains the set of calculated data
+ * @author Mees Gelein
+ */
+public class Statistics {
+
+	/**The HashMap used to store the amount of items returned per date*/
+	public HashMap<String, Integer> returnAmount = new HashMap<String, Integer>();
+	/**The HashMap used to store the amount of items rented per date*/
+	public HashMap<String, Integer> rentAmount = new HashMap<String, Integer>();
+	/**The HashMap used to store the amount of days an item has been rented*/
+	public HashMap<String, Integer> daysRented = new HashMap<String, Integer>();
+	
+	/**
+	 * The amount of items that were rented on the specified date
+	 * @param date
+	 * @return
+	 */
+	public int amountRentedOn(String date){
+		int i = rentAmount.get(date)
+	}
+}

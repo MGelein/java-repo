@@ -1,8 +1,6 @@
 package trb1914.net;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -12,7 +10,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
-import javax.swing.Timer;
 
 import trb1914.XMLParser;
 import trb1914.data.Registry;
@@ -34,8 +31,6 @@ public class RentalServer {
 	public static int COMM_PORT = PORT_NUMBER;//used to send messages from client to server
 	///The rentals file loaded into memory
 	private ArrayList<Rental> allRentals = new ArrayList<Rental>();
-	///The timer used to create backups every now and then
-	private Timer saveTimer;
 	/**List of all the member addresses*/
 	private ArrayList<String> addresses = new ArrayList<String>();
 	/**The timeout to wait for a connection when searching for this server*/
@@ -71,16 +66,6 @@ public class RentalServer {
 		parseXML();
 		openDetectPort();
 		openCommPort();
-
-		saveTimer = new Timer(Registry.SAVE_DELAY, new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				Debug.println("Saving the rentals file...", this);
-				synchronized(allRentals){
-					XMLParser.saveRentals(allRentals);
-				}
-			}
-		});
-		saveTimer.start();
 	}
 
 	/**
@@ -125,6 +110,13 @@ public class RentalServer {
 			//if no match was found this is a new rental and must be added to the system
 			Debug.println("No match was found. Add new rental: " + s, this);
 			allRentals.add(r);
+		}
+		saveFile();
+	}
+	
+	private void saveFile(){
+		synchronized(allRentals){
+			XMLParser.saveRentals(allRentals);
 		}
 	}
 
@@ -241,16 +233,6 @@ public class RentalServer {
 			}
 		}).start();
 	}
-
-	/**
-	 * Saves the Rentals file
-	 */
-	private void saveFile(){
-		synchronized(allRentals){
-			XMLParser.saveRentals(allRentals);
-		}
-	}
-
 	/**
 	 * Shuts down the server. Saves the rentals file
 	 */

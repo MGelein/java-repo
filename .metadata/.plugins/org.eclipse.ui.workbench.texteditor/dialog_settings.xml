@@ -6,20 +6,20 @@
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="Reader" key="selection"/>
+		<item value="searchfield" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="reader"/>
 			<item value="searchField"/>
-			<item value="subm"/>
-			<item value="remove"/>
 			<item value="closeWind"/>
-			<item value="closeW"/>
-			<item value="eastP"/>
-			<item value="Alles"/>
+			<item value="close"/>
+			<item value="load"/>
+			<item value="l"/>
+			<item value="new RentalItem"/>
+			<item value="RentalItem"/>
+			<item value="copies"/>
 		</list>
 		<list key="replacehistory">
 			<item value="ImageHelper.getImageIcon("/>
