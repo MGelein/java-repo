@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="javax.xml.parsers.DocumentBuilderFactory"/>
 <fullyQualifiedTypeName name="java.io.StringReader"/>
 <fullyQualifiedTypeName name="trb1914.gui.ICloseWindow"/>
 <fullyQualifiedTypeName name="trb1914.helper.SystemHelper"/>
 <fullyQualifiedTypeName name="java.awt.image.BufferedImage"/>
 <fullyQualifiedTypeName name="trb1914.gui.LoaderPanel"/>
 <fullyQualifiedTypeName name="java.awt.event.WindowAdapter"/>
-<fullyQualifiedTypeName name="trb1914.helper.ImageHelper"/>
 <fullyQualifiedTypeName name="trb1914.protagoras.Protagoras"/>
 <fullyQualifiedTypeName name="java.awt.FileDialog"/>
 <fullyQualifiedTypeName name="java.io.FilenameFilter"/>
@@ -41,7 +39,6 @@
 <fullyQualifiedTypeName name="javax.swing.JTabbedPane"/>
 <fullyQualifiedTypeName name="trb1914.StatisticsView"/>
 <fullyQualifiedTypeName name="java.util.concurrent.ExecutorService"/>
-<fullyQualifiedTypeName name="java.util.concurrent.Executors"/>
 <fullyQualifiedTypeName name="java.util.concurrent.Callable"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="trb1914.data.StatisticsCalculator.Calculator"/>
@@ -60,4 +57,7 @@
 <fullyQualifiedTypeName name="javax.swing.JTextField"/>
 <fullyQualifiedTypeName name="java.util.Date"/>
 <fullyQualifiedTypeName name="java.util.Calendar"/>
+<fullyQualifiedTypeName name="java.util.concurrent.Executors"/>
+<fullyQualifiedTypeName name="trb1914.helper.ImageHelper"/>
+<fullyQualifiedTypeName name="trb1914.threading.ThreadManager"/>
 </qualifiedTypeNameHistroy>

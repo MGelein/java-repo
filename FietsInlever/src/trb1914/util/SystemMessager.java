@@ -7,6 +7,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
+import trb1914.threading.ThreadManager;
 /**
  * tiny class to allow system message to be printed at the bottom
  * of the screen
@@ -41,7 +43,7 @@ public class SystemMessager extends JPanel {
 	 * @param s
 	 */
 	public void display(final String s){
-		new Thread(new Runnable(){
+		ThreadManager.submit(new Runnable(){
 			public void run(){
 				label.setText(s);
 				try {
@@ -56,7 +58,7 @@ public class SystemMessager extends JPanel {
 					msgList.remove(0);
 				}
 			}
-		}).start();
+		});
 	}
 	/**
 	 * adds the specified String to the queue of messages to display

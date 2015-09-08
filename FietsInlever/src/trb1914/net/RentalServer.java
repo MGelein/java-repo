@@ -15,6 +15,7 @@ import trb1914.XMLParser;
 import trb1914.data.Registry;
 import trb1914.data.Rental;
 import trb1914.debug.Debug;
+import trb1914.threading.ThreadManager;
 
 /**
  * Server that will do the actual file reading,parsing and writing
@@ -72,7 +73,7 @@ public class RentalServer {
 	 * Opens the communication port that listens for a broadcast from one of the client members
 	 */
 	private void openCommPort(){
-		new Thread(new Runnable(){
+		ThreadManager.submit(new Runnable(){
 			public void run(){
 				try{
 					processInput(SocketHelper.receiveOn(COMM_PORT));
@@ -82,7 +83,7 @@ public class RentalServer {
 					e.printStackTrace();
 				}
 			}
-		}).start();
+		});
 	}
 
 	/**
@@ -125,14 +126,14 @@ public class RentalServer {
 	 * @param s
 	 */
 	private void broadCast(final String s){
-		new Thread(new Runnable(){
+		ThreadManager.submit(new Runnable(){
 			public void run(){
 				for(String address : addresses){
 					Debug.println("broadcastAll: " + s, this);
 					broadCastTo(address, s);
 				}
 			}
-		}).start();
+		});
 	}
 
 	/**
@@ -174,7 +175,7 @@ public class RentalServer {
 	 * list of rentals. Done on a separate thread
 	 */
 	private void openDetectPort(){
-		new Thread(new Runnable(){
+		ThreadManager.submit(new Runnable(){
 			public void run(){
 				try{
 					Debug.println("Started detection on port " + DETECT_PORT + "...", this);
@@ -209,7 +210,7 @@ public class RentalServer {
 							+ "\n\tby another instance of the rentalserver already running on this pc.", this);
 				}
 			}
-		}).start();
+		});
 	}
 
 	/**
@@ -217,7 +218,7 @@ public class RentalServer {
 	 */
 	private void parseXML(){
 		Debug.println("Rentals file parsing started...", this);
-		new Thread(new Runnable(){
+		ThreadManager.submit(new Runnable(){
 			public void run(){
 				File rentalsFile = new File(Registry.RENTALS_FILE_LOCATION);
 				if(rentalsFile.exists()){
@@ -231,7 +232,7 @@ public class RentalServer {
 				}
 
 			}
-		}).start();
+		});
 	}
 	/**
 	 * Shuts down the server. Saves the rentals file

@@ -1,13 +1,13 @@
 package trb1914.util;
 
 import java.awt.Image;
-import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 
+import trb1914.helper.ImageHelper;
 import trb1914.helper.SystemHelper;
 
 public class SplashScreen extends JWindow {
@@ -25,7 +25,7 @@ public class SplashScreen extends JWindow {
 	 */
 	public SplashScreen() {
 		//adds picture to the panel
-		Image img = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/trb1914/img/splash.png"));
+		Image img = ImageHelper.getImage("/trb1914/img/splash.png");
 		getContentPane().add(new JLabel("",new ImageIcon(img), SwingConstants.CENTER));
 		
 		//set panel size and position
