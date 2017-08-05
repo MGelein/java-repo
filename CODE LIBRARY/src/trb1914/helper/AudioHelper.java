@@ -77,7 +77,6 @@ public abstract class AudioHelper {
 	 */
 	public static void playSound(String url, float dB){
 		if(url == null) {Debug.println("Can not play a null url", AudioHelper.class); return;}
-		
 		try {
 			playAudioInputStream(AudioSystem.getAudioInputStream(new BufferedInputStream(AudioHelper.class.getResourceAsStream(url))), dB);
 		} catch (UnsupportedAudioFileException e) {

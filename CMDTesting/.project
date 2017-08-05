@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>External Source</name>
+			<type>2</type>
+			<location>C:/Users/Mees/JavaWorkspace/CODE LIBRARY/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import trb1914.talk.TalkBot;
+
 /**
  * A class that evaluates and executes user defined commands
  * @author Mees Gelein
@@ -59,7 +61,24 @@ public class CMDLibrary {
 		case "power":
 			power(subset(args));
 			break;
+		case "say":
+			say(subset(args));
+			break;
 		}
+	}
+	
+	/**
+	 * Uses talkbot to say the provided args strings
+	 * @param args
+	 */
+	private static void say(String[] args){
+		TalkBot b = new TalkBot();
+		StringBuilder builder = new StringBuilder();
+		for(String s : args){
+			builder.append(s);
+			builder.append(" ");
+		}
+		b.say(builder.toString());
 	}
 	
 	/**
@@ -182,6 +201,17 @@ public class CMDLibrary {
 				}else{
 					System.out.println("File already exists. Creation is cancelled.");
 				}
+			}
+		}else if(args[0].contains("j")){
+			int amt = Integer.parseInt(args[1]);
+			while(amt > 0){
+				File f = new File("j" + amt);
+				try {
+					f.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}				
+				amt --;
 			}
 		}else{
 			System.out.println("Creation type unrecognized. Currently only file and directory are supported");

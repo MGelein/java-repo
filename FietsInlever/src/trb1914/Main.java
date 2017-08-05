@@ -18,7 +18,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -142,7 +141,12 @@ public class Main extends JFrame{
 
 	/**Amount of objects that are due today*/
 	private int dueTodayObjectCount = 0;
+	/**Amount of objects that are due tomorrow*/
+	private int dueTomorrowObjectCount = 0;
+	/**Amount of objects that are due tomorrow*/
+	private int dueTomorrowAfterObjectCount = 0;
 	/**Amount of rentals that have not yet been paid for*/
+	@SuppressWarnings("unused")
 	private int unpaidRentalCount = 0;
 	/**Amount of rentals that are late*/
 	private int lateRentalCount = 0;
@@ -168,27 +172,8 @@ public class Main extends JFrame{
 		//loads the pref file
 		Preferences.load(Registry.PREF_FILE_LOCATION);
 		loadPrefs();
-		//check if we even should be running at all (only allow one instance)
-		File tempFile = new File("lock.tmp");
-		if(tempFile.exists()) {
-			Debug.println("Instance of application already running.", Main.class); 
-			if(Preferences.getBoolean("PROG_singleInstance", true)){
-				Debug.println("Only one instace of the application is allowed. Ignoring startup request", Main.class);
-				System.exit(0);
-				return;
-			}else{
-				Debug.println("Multiple instance mode is turned on. The application can be launched multiple times", Main.class);
-			}
-		}else{
-			try {
-				tempFile.createNewFile();
-				tempFile.deleteOnExit();
-			} catch (IOException e1) {
-				Debug.println("Failed to create the locking File. The application may be launched with multiple instances");
-			}
-		}
-
-		//set some system graphics properties
+		
+		//set some system graphics properties (anti aliasing)
 		System.setProperty("awt.useSystemAAFontSettings","on");
 		System.setProperty("swing.aatext", "true");
 
@@ -878,7 +863,7 @@ public class Main extends JFrame{
 		filterPanel.add(latePanel);
 
 		searchSettingPanel.add(filterPanel);
-
+		
 		JPanel duePanel = new JPanel(new BorderLayout());
 		final JToggleButton dueButton = new JToggleButton("Vandaag inleveren");
 		dueButton.setSelected(Main.SHOW_DUE_TODAY);
@@ -927,6 +912,14 @@ public class Main extends JFrame{
 		final JLabel dueTodayLabel = new JLabel("Vandaag inleveren: -- ");
 		components.add(dueTodayLabel);
 		dueTodayPanel.add(dueTodayLabel);
+		JPanel dueTomorrowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		final JLabel dueTomorrowLabel = new JLabel("Morgen inleveren: -- ");
+		components.add(dueTomorrowLabel);
+		dueTomorrowPanel.add(dueTomorrowLabel);
+		JPanel dueTomorrowAfterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		final JLabel dueTomorrowAfterLabel = new JLabel("Overmorgen inleveren: -- ");
+		components.add(dueTomorrowAfterLabel);
+		dueTomorrowAfterPanel.add(dueTomorrowAfterLabel);
 		JPanel rentalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		final JLabel rentalLabel = new JLabel("Aantal lopende orders: -- ");
 		components.add(rentalLabel);
@@ -941,6 +934,8 @@ public class Main extends JFrame{
 		searchCountPanel.add(searchCountLabel);
 
 		infoPanel.add(dueTodayPanel);
+		infoPanel.add(dueTomorrowPanel);
+		infoPanel.add(dueTomorrowAfterPanel);
 		infoPanel.add(rentalPanel);
 		infoPanel.add(lateCountPanel);
 		infoPanel.add(datePanel);
@@ -950,9 +945,11 @@ public class Main extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				dateLabel.setText("Datum: " + DateFormatter.getCurrentTimeStamp());
 				dueTodayLabel.setText("Vandaag inleveren: " + dueTodayObjectCount);
-				rentalLabel.setText("Aantal lopende orders: " + unpaidRentalCount + "/" + allRentals.size());
+				dueTomorrowLabel.setText("Morgen inleveren: " + dueTomorrowObjectCount);
+				dueTomorrowAfterLabel.setText("Overmorgen inleveren: " + dueTomorrowAfterObjectCount);
 				lateCountLabel.setText("Te laat: " + lateRentalCount);
 				searchCountLabel.setText("Zoekresultaten: " + searchResultCount);
+				updateObjectCountVariables();
 			}
 		});
 		infoUpdateTimer.start();
@@ -1209,6 +1206,8 @@ public class Main extends JFrame{
 		unpaidRentalCount = 0;
 		dueTodayObjectCount = 0;
 		lateRentalCount = 0;
+		dueTomorrowAfterObjectCount = 0;
+		dueTomorrowObjectCount = 0;
 		synchronized(allRentals){
 			for(Rental cRental : allRentals){
 				if(!cRental.isAllPaid()){
@@ -1218,7 +1217,11 @@ public class Main extends JFrame{
 					}
 				}
 				if(cRental.isDueToday() && !cRental.isAllPaid()){
-					dueTodayObjectCount+= cRental.getObjectCount();
+					dueTodayObjectCount += cRental.getObjectCount();
+				}else if(cRental.isDueTomorrow() && !cRental.isAllPaid()){
+					dueTomorrowObjectCount += cRental.getObjectCount();
+				}else if(cRental.isDueTomorrowAfter() && !cRental.isAllPaid()){
+					dueTomorrowAfterObjectCount += cRental.getObjectCount();
 				}
 			}
 		}

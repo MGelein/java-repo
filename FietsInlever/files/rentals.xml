@@ -18,4 +18,39 @@
 <object rentDate="26-08-2015" returnDate="26-08-2015">D01</object>
 <comment/>
 </rental>
+<rental>
+<startDate>05-08-2017</startDate>
+<endDate>05-08-2017</endDate>
+<code>31</code>
+<hasWarning priority="low">false</hasWarning>
+<object rentDate="05-08-2017" returnDate="05-08-2017">B55</object>
+<object rentDate="05-08-2017" returnDate="05-08-2017">B56</object>
+<comment/>
+</rental>
+<rental>
+<startDate>05-08-2017</startDate>
+<endDate>06-08-2017</endDate>
+<code>32</code>
+<hasWarning priority="low">false</hasWarning>
+<object rentDate="05-08-2017" returnDate="06-08-2017">V01</object>
+<object rentDate="05-08-2017" returnDate="06-08-2017">C45</object>
+<comment/>
+</rental>
+<rental>
+<startDate>05-08-2017</startDate>
+<endDate>12-08-2017</endDate>
+<code>34</code>
+<hasWarning priority="low">false</hasWarning>
+<object rentDate="05-08-2017" returnDate="12-08-2017">W12</object>
+<comment/>
+</rental>
+<rental>
+<startDate>05-08-2017</startDate>
+<endDate>07-08-2017</endDate>
+<code>33</code>
+<hasWarning priority="low">false</hasWarning>
+<object rentDate="05-08-2017" returnDate="07-08-2017">V12</object>
+<object rentDate="05-08-2017" returnDate="07-08-2017">AK47</object>
+<comment/>
+</rental>
 </XML>

@@ -2,6 +2,7 @@ package trb1914.data;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -128,6 +129,34 @@ public class Rental {
 	 */
 	public boolean isDueToday(){
 		return (!isLate() && !normalizeDate(new Date()).before(_endDate));
+	}
+	
+	/**
+	 * If the endDate is tomorrow
+	 * @return
+	 */
+	public boolean isDueTomorrow(){
+		return _endDate.equals(getDaysFromNow(1));
+	}
+	
+	/**
+	 * If the endDate is the day after tomorrow
+	 * @return
+	 */
+	public boolean isDueTomorrowAfter(){
+		return _endDate.equals(getDaysFromNow(2));
+	}
+	
+	/**
+	 * Returns the date of tomorrow normalized
+	 * @param days		the amount of days in the future
+	 * @return
+	 */
+	private Date getDaysFromNow(int days){
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(Calendar.DATE, days);
+		return normalizeDate(c.getTime());
 	}
 
 	/**

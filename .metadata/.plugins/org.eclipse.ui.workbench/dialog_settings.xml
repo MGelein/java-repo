@@ -22,9 +22,9 @@
 		</list>
 	</section>
 	<section name="NewWizardAction">
-		<item value="com.petrbroz.webglsl.wizards.VertexShaderWizard" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
+		<item value="org.eclipse.fx.ide.fxml.wizard1" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
 		<list key="NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID">
-			<item value="com.petrbroz.webglsl"/>
+			<item value="org.eclipse.fx.ide"/>
 		</list>
 	</section>
 	<section name="ImportExportAction">
